@@ -59,6 +59,7 @@ public abstract class ConcurrentMapEventStore extends InstanceEventPublisher imp
 	@Override
 	public Flux<InstanceEvent> findAll() {
 		System.out.println("Foo");
+		System.out.println("Bar");
 		return Flux.defer(() -> Flux.fromIterable(eventLog.values()).flatMapIterable(Function.identity())
 				.sort(byTimestampAndIdAndVersion));
 	}
