@@ -17,15 +17,29 @@
 <template>
   <table class="table is-hoverable is-selectable is-fullwidth instances-list">
     <tbody>
-      <tr v-for="instance in instances" :key="instance.id" @click.stop="showDetails(instance)">
+      <tr
+        v-for="instance in instances"
+        :key="instance.id"
+        @click.stop="showDetails(instance)"
+      >
         <td class="instance-list-item__status">
-          <sba-status :status="instance.statusInfo.status" :date="instance.statusTimestamp" />
+          <sba-status
+            :status="instance.statusInfo.status"
+            :date="instance.statusTimestamp"
+          />
         </td>
         <td class="is-narrow">
-          <a v-text="instance.registration.serviceUrl || instance.registration.healthUrl"
-             :href="instance.registration.serviceUrl || instance.registration.healthUrl"
-             @click.stop
-          /><br>
+          <a
+            v-text="
+              instance.registration.serviceUrl ||
+              instance.registration.healthUrl
+            "
+            :href="
+              instance.registration.serviceUrl ||
+              instance.registration.healthUrl
+            "
+            @click.stop
+          /><br />
           <span class="is-muted" v-text="instance.id" />
         </td>
         <td>
@@ -42,55 +56,58 @@
   </table>
 </template>
 <script>
-  export default {
-    props: {
-      instances: {
-        type: Array,
-        default: () => [],
-      },
-      showNotificationSettings: {
-        type: Boolean,
-        default: false
-      },
-      hasActiveNotificationFilter: {
-        type: Function,
-        default: () => false
-      }
+export default {
+  props: {
+    instances: {
+      type: Array,
+      default: () => [],
     },
-    methods: {
-      showDetails(instance) {
-        this.$router.push({name: 'instances/details', params: {instanceId: instance.id}});
-      }
-    }
-  }
+    showNotificationSettings: {
+      type: Boolean,
+      default: false,
+    },
+    hasActiveNotificationFilter: {
+      type: Function,
+      default: () => false,
+    },
+  },
+  methods: {
+    showDetails(instance) {
+      this.$router.push({
+        name: "instances/details",
+        params: { instanceId: instance.id },
+      });
+    },
+  },
+};
 </script>
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .instances-list td {
-    vertical-align: middle;
+.instances-list td {
+  vertical-align: middle;
+}
+
+.instance-list-item {
+  &__status {
+    width: $gap;
   }
 
-  .instance-list-item {
-    &__status {
-      width: $gap;
+  &__actions {
+    text-align: right;
+    opacity: 0;
+    transition: all $easing $speed;
+    will-change: opacity;
+    margin-right: $gap;
+
+    *:hover > & {
+      opacity: 1;
     }
 
-    &__actions {
-      text-align: right;
-      opacity: 0;
-      transition: all $easing $speed;
-      will-change: opacity;
-      margin-right: $gap;
-
-      *:hover > & {
-        opacity: 1;
-      }
-
-      & > * {
-        width: ($gap / 2);
-        height: ($gap / 2);
-      }
+    & > * {
+      width: ($gap / 2);
+      height: ($gap / 2);
     }
   }
+}
 </style>

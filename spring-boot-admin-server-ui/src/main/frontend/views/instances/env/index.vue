@@ -15,49 +15,68 @@
   -->
 
 <template>
-  <section :class="{ 'is-loading' : !hasLoaded }" class="section">
-    <sba-alert v-if="error" :error="error" :title="$t('instances.env.fetch_failed')" />
+  <section :class="{ 'is-loading': !hasLoaded }" class="section">
+    <sba-alert
+      v-if="error"
+      :error="error"
+      :title="$t('instances.env.fetch_failed')"
+    />
 
-    <div v-if="env && env.activeProfiles.length > 0" class="field is-grouped is-grouped-multiline">
+    <div
+      v-if="env && env.activeProfiles.length > 0"
+      class="field is-grouped is-grouped-multiline"
+    >
       <div v-for="profile in env.activeProfiles" :key="profile" class="control">
         <div class="tags has-addons">
-          <span class="tag is-medium is-primary" v-text="$t('instances.env.active_profile')" />
+          <span
+            class="tag is-medium is-primary"
+            v-text="$t('instances.env.active_profile')"
+          />
           <span class="tag is-medium" v-text="profile" />
         </div>
       </div>
     </div>
-    <refresh v-if="instance.hasEndpoint('refresh')"
-             :instance="instance"
-             :instance-count="application.instances.length"
-             :application="application"
-             @reset="fetchEnv"
+    <refresh
+      v-if="instance.hasEndpoint('refresh')"
+      :instance="instance"
+      :instance-count="application.instances.length"
+      :application="application"
+      @reset="fetchEnv"
     />
-    <sba-env-manager v-if="env && hasEnvManagerSupport"
-                     :instance="instance" :property-sources="env.propertySources"
-                     @refresh="fetchEnv" @update="fetchEnv"
+    <sba-env-manager
+      v-if="env && hasEnvManagerSupport"
+      :instance="instance"
+      :property-sources="env.propertySources"
+      @refresh="fetchEnv"
+      @update="fetchEnv"
     />
     <div v-if="env" class="field">
       <p class="control is-expanded has-icons-left">
-        <input
-          v-model="filter"
-          class="input"
-          type="search"
-        >
+        <input v-model="filter" class="input" type="search" />
         <span class="icon is-small is-left">
           <font-awesome-icon icon="filter" />
         </span>
       </p>
     </div>
-    <sba-panel v-for="propertySource in propertySources"
-               :key="propertySource.name" :header-sticks-below="['#navigation']"
-               :title="propertySource.name"
+    <sba-panel
+      v-for="propertySource in propertySources"
+      :key="propertySource.name"
+      :header-sticks-below="['#navigation']"
+      :title="propertySource.name"
     >
-      <table v-if="propertySource.properties && Object.keys(propertySource.properties).length > 0"
-             class="table is-fullwidth"
+      <table
+        v-if="
+          propertySource.properties &&
+          Object.keys(propertySource.properties).length > 0
+        "
+        class="table is-fullwidth"
       >
-        <tr v-for="(value, name) in propertySource.properties" :key="`${propertySource.name}-${name}`">
+        <tr
+          v-for="(value, name) in propertySource.properties"
+          :key="`${propertySource.name}-${name}`"
+        >
           <td>
-            <span v-text="name" /><br>
+            <span v-text="name" /><br />
             <small v-if="value.origin" class="is-muted" v-text="value.origin" />
           </td>
           <td class="is-breakable" v-text="getValue(name, value.value)" />
@@ -69,24 +88,28 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import pickBy from 'lodash/pickBy';
-import {VIEW_GROUP} from '../../index';
-import sbaEnvManager from './env-manager';
-  import refresh from './refresh';
-  import Application from '@/services/application';
+import Instance from "@/services/instance";
+import pickBy from "lodash/pickBy";
+import { VIEW_GROUP } from "../../index";
+import sbaEnvManager from "./env-manager";
+import refresh from "./refresh";
+import Application from "@/services/application";
 
 const filterProperty = (needle) => (property, name) => {
-  return name.toString().toLowerCase().includes(needle) || (property.value && property.value.toString().toLowerCase().includes(needle));
+  return (
+    name.toString().toLowerCase().includes(needle) ||
+    (property.value && property.value.toString().toLowerCase().includes(needle))
+  );
 };
-const filterProperties = (needle, properties) => pickBy(properties, filterProperty(needle));
+const filterProperties = (needle, properties) =>
+  pickBy(properties, filterProperty(needle));
 const filterPropertySource = (needle) => (propertySource) => {
   if (!propertySource || !propertySource.properties) {
     return null;
   }
   return {
     ...propertySource,
-    properties: filterProperties(needle, propertySource.properties)
+    properties: filterProperties(needle, propertySource.properties),
   };
 };
 
@@ -94,23 +117,21 @@ export default {
   props: {
     instance: {
       type: Instance,
-      required: true
-      },
-      application: {
-        type: Application,
-        required: true
-    }
+      required: true,
+    },
+    application: {
+      type: Application,
+      required: true,
+    },
   },
-    components: {sbaEnvManager, refresh},
+  components: { sbaEnvManager, refresh },
   data: () => ({
     hasLoaded: false,
     error: null,
     env: null,
     filter: null,
     hasEnvManagerSupport: false,
-    propertyNamesToEscape: [
-      'line.separator'
-    ]
+    propertyNamesToEscape: ["line.separator"],
   }),
   computed: {
     propertySources() {
@@ -122,8 +143,8 @@ export default {
       }
       return this.env.propertySources
         .map(filterPropertySource(this.filter.toLowerCase()))
-        .filter(ps => ps && Object.keys(ps.properties).length > 0);
-    }
+        .filter((ps) => ps && Object.keys(ps.properties).length > 0);
+    },
   },
   created() {
     this.fetchEnv();
@@ -136,7 +157,7 @@ export default {
         const res = await this.instance.fetchEnv();
         this.env = res.data;
       } catch (error) {
-        console.warn('Fetching environment failed:', error);
+        console.warn("Fetching environment failed:", error);
         this.error = error;
       }
       this.hasLoaded = true;
@@ -145,29 +166,28 @@ export default {
       try {
         this.hasEnvManagerSupport = await this.instance.hasEnvManagerSupport();
       } catch (error) {
-        console.warn('Determine env manager support failed:', error);
+        console.warn("Determine env manager support failed:", error);
         this.hasEnvManagerSupport = false;
       }
     },
     getValue(name, value) {
       if (this.propertyNamesToEscape.includes(name)) {
-        return value.replace(/\n/g, '\\n')
-          .replace(/\r/g, '\\r');
+        return value.replace(/\n/g, "\\n").replace(/\r/g, "\\r");
       }
       return value;
-    }
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'instances/env',
-      parent: 'instances',
-      path: 'env',
+      name: "instances/env",
+      parent: "instances",
+      path: "env",
       component: this,
-      label: 'instances.env.label',
+      label: "instances.env.label",
       group: VIEW_GROUP.INSIGHTS,
       order: 100,
-      isEnabled: ({instance}) => instance.hasEndpoint('env')
+      isEnabled: ({ instance }) => instance.hasEndpoint("env"),
     });
-  }
-}
+  },
+};
 </script>

@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-import {ApplicationLoggers, InstanceLoggers} from './service';
+import { ApplicationLoggers, InstanceLoggers } from "./service";
 
-describe('InstanceLoggers', () => {
+describe("InstanceLoggers", () => {
   const instance = {
-    id: 'test-1',
+    id: "test-1",
     fetchLoggers: jest.fn(),
-    configureLogger: jest.fn()
+    configureLogger: jest.fn(),
   };
   const service = new InstanceLoggers(instance);
 
-  it('should configure loggers', () => {
-    service.configureLogger('ROOT', 'WARN');
-    expect(instance.configureLogger).toHaveBeenCalledWith('ROOT', 'WARN');
+  it("should configure loggers", () => {
+    service.configureLogger("ROOT", "WARN");
+    expect(instance.configureLogger).toHaveBeenCalledWith("ROOT", "WARN");
   });
 
-  it('should fetch loggers', async () => {
+  it("should fetch loggers", async () => {
     instance.fetchLoggers.mockReturnValue(
       Promise.resolve({
         data: {
-          levels: ['TRACE', 'INFO', 'FATAL'],
+          levels: ["TRACE", "INFO", "FATAL"],
           loggers: {
-            'ROOT': {
-              configuredLevel: 'INFO',
-              effectiveLevel: 'INFO'
+            ROOT: {
+              configuredLevel: "INFO",
+              effectiveLevel: "INFO",
             },
-            'de.codecentric': {
+            "de.codecentric": {
               configuredLevel: null,
-              effectiveLevel: 'INFO'
-            }
-          }
-        }
+              effectiveLevel: "INFO",
+            },
+          },
+        },
       })
     );
 
@@ -52,77 +52,84 @@ describe('InstanceLoggers', () => {
 
     expect(cfg).toEqual({
       errors: [],
-      levels: ['TRACE', 'INFO', 'FATAL'],
-      loggers: [{
-        name: 'ROOT',
-        level: [{
-          instanceId: 'test-1',
-          configuredLevel: 'INFO',
-          effectiveLevel: 'INFO'
-        }]
-      }, {
-        name: 'de.codecentric',
-        level: [{
-          instanceId: 'test-1',
-          configuredLevel: null,
-          effectiveLevel: 'INFO'
-        }]
-      }]
-    })
+      levels: ["TRACE", "INFO", "FATAL"],
+      loggers: [
+        {
+          name: "ROOT",
+          level: [
+            {
+              instanceId: "test-1",
+              configuredLevel: "INFO",
+              effectiveLevel: "INFO",
+            },
+          ],
+        },
+        {
+          name: "de.codecentric",
+          level: [
+            {
+              instanceId: "test-1",
+              configuredLevel: null,
+              effectiveLevel: "INFO",
+            },
+          ],
+        },
+      ],
+    });
   });
 });
 
-describe('ApplicationLoggers', () => {
+describe("ApplicationLoggers", () => {
   const application = {
     fetchLoggers: jest.fn(),
-    configureLogger: jest.fn()
+    configureLogger: jest.fn(),
   };
   const service = new ApplicationLoggers(application);
 
-  it('should configure loggers', () => {
-    service.configureLogger('ROOT', 'WARN');
-    expect(application.configureLogger).toHaveBeenCalledWith('ROOT', 'WARN');
+  it("should configure loggers", () => {
+    service.configureLogger("ROOT", "WARN");
+    expect(application.configureLogger).toHaveBeenCalledWith("ROOT", "WARN");
   });
 
-  it('should fetch loggers', async () => {
+  it("should fetch loggers", async () => {
     application.fetchLoggers.mockReturnValue(
       Promise.resolve({
         responses: [
           {
-            instanceId: 'test-1',
+            instanceId: "test-1",
             status: 200,
             body: {
-              levels: ['TRACE', 'FATAL'],
+              levels: ["TRACE", "FATAL"],
               loggers: {
-                'ROOT': {
-                  configuredLevel: 'INFO',
-                  effectiveLevel: 'INFO'
+                ROOT: {
+                  configuredLevel: "INFO",
+                  effectiveLevel: "INFO",
                 },
-                'de.codecentric': {
+                "de.codecentric": {
                   configuredLevel: null,
-                  effectiveLevel: 'INFO'
-                }
-              }
-            }
+                  effectiveLevel: "INFO",
+                },
+              },
+            },
           },
           {
-            instanceId: 'test-2',
+            instanceId: "test-2",
             status: 200,
             body: {
-              levels: ['INFO'],
+              levels: ["INFO"],
               loggers: {
-                'ROOT': {
-                  configuredLevel: 'INFO',
-                  effectiveLevel: 'INFO'
+                ROOT: {
+                  configuredLevel: "INFO",
+                  effectiveLevel: "INFO",
                 },
-                'de.codecentric': {
-                  configuredLevel: 'WARN',
-                  effectiveLevel: 'WARN'
-                }
-              }
-            }
-          }
-        ]
+                "de.codecentric": {
+                  configuredLevel: "WARN",
+                  effectiveLevel: "WARN",
+                },
+              },
+            },
+          },
+        ],
       })
     );
 
@@ -130,30 +137,39 @@ describe('ApplicationLoggers', () => {
 
     expect(cfg).toEqual({
       errors: [],
-      levels: ['TRACE', 'FATAL', 'INFO'],
-      loggers: [{
-        name: 'ROOT',
-        level: [{
-          instanceId: 'test-1',
-          configuredLevel: 'INFO',
-          effectiveLevel: 'INFO'
-        }, {
-          instanceId: 'test-2',
-          configuredLevel: 'INFO',
-          effectiveLevel: 'INFO'
-        }]
-      }, {
-        name: 'de.codecentric',
-        level: [{
-          instanceId: 'test-1',
-          configuredLevel: null,
-          effectiveLevel: 'INFO'
-        }, {
-          instanceId: 'test-2',
-          configuredLevel: 'WARN',
-          effectiveLevel: 'WARN'
-        }]
-      }]
-    })
+      levels: ["TRACE", "FATAL", "INFO"],
+      loggers: [
+        {
+          name: "ROOT",
+          level: [
+            {
+              instanceId: "test-1",
+              configuredLevel: "INFO",
+              effectiveLevel: "INFO",
+            },
+            {
+              instanceId: "test-2",
+              configuredLevel: "INFO",
+              effectiveLevel: "INFO",
+            },
+          ],
+        },
+        {
+          name: "de.codecentric",
+          level: [
+            {
+              instanceId: "test-1",
+              configuredLevel: null,
+              effectiveLevel: "INFO",
+            },
+            {
+              instanceId: "test-2",
+              configuredLevel: "WARN",
+              effectiveLevel: "WARN",
+            },
+          ],
+        },
+      ],
+    });
   });
 });

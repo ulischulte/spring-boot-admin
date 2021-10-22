@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import sbaConfig from '@/sba-config'
-import axios from 'axios';
+import sbaConfig from "@/sba-config";
+import axios from "axios";
 
-axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 axios.defaults.xsrfHeaderName = sbaConfig.csrf.headerName;
 
-export const redirectOn401 = (predicate = () => true) => error => {
-  if (error.response && error.response.status === 401 && predicate(error)) {
-    window.location.assign(`login?redirectTo=${encodeURIComponent(window.location.href)}`);
-  }
-  return Promise.reject(error);
+export const redirectOn401 =
+  (predicate = () => true) =>
+  (error) => {
+    if (error.response && error.response.status === 401 && predicate(error)) {
+      window.location.assign(
+        `login?redirectTo=${encodeURIComponent(window.location.href)}`
+      );
+    }
+    return Promise.reject(error);
+  };
 
-};
-
-const instance = axios.create({headers: {'Accept': 'application/json'}});
-instance.interceptors.response.use(response => response, redirectOn401());
+const instance = axios.create({ headers: { Accept: "application/json" } });
+instance.interceptors.response.use((response) => response, redirectOn401());
 instance.create = axios.create;
 
 export default instance;

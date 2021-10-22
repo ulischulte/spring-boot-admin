@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-import shortenClassname from './shortenClassname';
+import shortenClassname from "./shortenClassname";
 
-describe('shortenClassname', () => {
-
-  it('should shorten when too long', () => {
-    expect(shortenClassname('de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration', 40)).toBe('d.c.b.a.s.config.AdminServerAutoConfiguration')
+describe("shortenClassname", () => {
+  it("should shorten when too long", () => {
+    expect(
+      shortenClassname(
+        "de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration",
+        40
+      )
+    ).toBe("d.c.b.a.s.config.AdminServerAutoConfiguration");
   });
 
-  it('should not shorten when string is small enough', () => {
-    expect(shortenClassname('de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration', 300)).toBe('de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration')
+  it("should not shorten when string is small enough", () => {
+    expect(
+      shortenClassname(
+        "de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration",
+        300
+      )
+    ).toBe(
+      "de.codecentric.boot.admin.server.config.AdminServerAutoConfiguration"
+    );
   });
 
-  it('should not shorten when no package is present', () => {
-    expect(shortenClassname('AdminServerAutoConfiguration', 1)).toBe('AdminServerAutoConfiguration')
+  it("should not shorten when no package is present", () => {
+    expect(shortenClassname("AdminServerAutoConfiguration", 1)).toBe(
+      "AdminServerAutoConfiguration"
+    );
   });
 });

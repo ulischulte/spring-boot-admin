@@ -22,26 +22,27 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      instance: { //<1>
-        type: Object,
-        required: true
-      }
+export default {
+  props: {
+    instance: {
+      //<1>
+      type: Object,
+      required: true,
     },
-    data: () => ({
-      text: ''
-    }),
-    async created() {
-      const response = await this.instance.axios.get('actuator/custom'); //<2>
-      this.text = response.data;
-    }
-  };
+  },
+  data: () => ({
+    text: "",
+  }),
+  async created() {
+    const response = await this.instance.axios.get("actuator/custom"); //<2>
+    this.text = response.data;
+  },
+};
 </script>
 
 <style>
-  .custom {
-    font-size: 20px;
-    width: 80%;
-  }
+.custom {
+  font-size: 20px;
+  width: 80%;
+}
 </style>

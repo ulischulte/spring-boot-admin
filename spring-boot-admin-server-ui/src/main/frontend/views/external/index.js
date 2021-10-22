@@ -14,40 +14,38 @@
  * limitations under the License.
  */
 
-import sbaConfig from '@/sba-config'
-import './style.scss';
+import sbaConfig from "@/sba-config";
+import "./style.scss";
 
-const addIframeView = (viewRegistry, {url, label, order}) => {
-  const urlWithoutScheme = url.replace(/^https?:[/][/]/, '');
+const addIframeView = (viewRegistry, { url, label, order }) => {
+  const urlWithoutScheme = url.replace(/^https?:[/][/]/, "");
   viewRegistry.addView({
     name: `external/${urlWithoutScheme}`,
-    path: `/external/${urlWithoutScheme.replace(/[^a-zA-Z]+/g, '-')}`,
+    path: `/external/${urlWithoutScheme.replace(/[^a-zA-Z]+/g, "-")}`,
     label,
     order,
     component: {
       inheritAttrs: false,
       render(createElement) {
-        return createElement(
-          'div',
-          {class: 'external-view'},
-          [createElement('iframe', {attrs: {src: url,}})]
-        )
-      }
-    }
+        return createElement("div", { class: "external-view" }, [
+          createElement("iframe", { attrs: { src: url } }),
+        ]);
+      },
+    },
   });
 };
 
-const addExternalLink = (viewRegistry, {url, label, order}) => {
+const addExternalLink = (viewRegistry, { url, label, order }) => {
   viewRegistry.addView({
     name: url,
     href: url,
     label,
-    order
+    order,
   });
 };
 
 export default {
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     sbaConfig.uiSettings.externalViews.forEach((view) => {
       if (view.iframe) {
         addIframeView(viewRegistry, view);
@@ -55,5 +53,5 @@ export default {
         addExternalLink(viewRegistry, view);
       }
     });
-  }
+  },
 };

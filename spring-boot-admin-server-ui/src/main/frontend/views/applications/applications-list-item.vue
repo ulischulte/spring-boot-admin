@@ -15,14 +15,18 @@
   -->
 
 <template>
-  <div class="application-list-item card" :class="{'is-active': isExpanded}">
-    <header class="hero application-list-item__header" :class="headerClass" v-on="$listeners">
+  <div class="application-list-item card" :class="{ 'is-active': isExpanded }">
+    <header
+      class="hero application-list-item__header"
+      :class="headerClass"
+      v-on="$listeners"
+    >
       <application-summary v-if="!isExpanded" :application="application" />
       <h1 v-else class="title is-size-5" v-text="application.name" />
       <div class="application-list-item__header__actions" @click.stop="">
         <router-link
           class="button icon-button"
-          :to="{ name: 'journal', query: { 'application' : application.name } }"
+          :to="{ name: 'journal', query: { application: application.name } }"
         >
           <font-awesome-icon icon="history" />
         </router-link>
@@ -30,7 +34,9 @@
           :id="`nf-settings-${application.name}`"
           v-if="hasNotificationFiltersSupport"
           @click="$emit('toggle-notification-filter-settings', application)"
-          :icon="hasActiveNotificationFilter(application) ? 'bell-slash' : 'bell'"
+          :icon="
+            hasActiveNotificationFilter(application) ? 'bell-slash' : 'bell'
+          "
         />
         <sba-icon-button
           icon="trash"
@@ -41,15 +47,19 @@
     </header>
     <div class="card-content" v-if="isExpanded">
       <instances-list :instances="application.instances">
-        <template slot="actions" slot-scope="{instance}">
-          <sba-icon-button :id="`nf-settings-${instance.id}`"
-                           v-if="hasNotificationFiltersSupport"
-                           @click.stop="$emit('toggle-notification-filter-settings', instance)"
-                           :icon="hasActiveNotificationFilter(instance) ? 'bell-slash' : 'bell'"
+        <template slot="actions" slot-scope="{ instance }">
+          <sba-icon-button
+            :id="`nf-settings-${instance.id}`"
+            v-if="hasNotificationFiltersSupport"
+            @click.stop="$emit('toggle-notification-filter-settings', instance)"
+            :icon="
+              hasActiveNotificationFilter(instance) ? 'bell-slash' : 'bell'
+            "
           />
-          <sba-icon-button icon="trash"
-                           v-if="instance.isUnregisterable"
-                           @click.stop="$emit('unregister', instance)"
+          <sba-icon-button
+            icon="trash"
+            v-if="instance.isUnregisterable"
+            @click.stop="$emit('unregister', instance)"
           />
         </template>
       </instances-list>
@@ -57,109 +67,109 @@
   </div>
 </template>
 <script>
-  import Application from '@/services/application';
-  import ApplicationSummary from './application-summary'
-  import InstancesList from './instances-list'
+import Application from "@/services/application";
+import ApplicationSummary from "./application-summary";
+import InstancesList from "./instances-list";
 
-  export default {
-    components: {ApplicationSummary, InstancesList},
-    props: {
-      application: {
-        type: Application,
-        required: true
-      },
-      isExpanded: {
-        type: Boolean,
-        default: false
-      },
-      notificationFilters: {
-        type: Array,
-        default: () => []
-      },
-      hasNotificationFiltersSupport: {
-        type: Boolean,
-        default: false
-      }
+export default {
+  components: { ApplicationSummary, InstancesList },
+  props: {
+    application: {
+      type: Application,
+      required: true,
     },
-    computed: {
-      headerClass() {
-        if (!this.isExpanded) {
-          return 'is-selectable';
-        }
-        if (this.application.status === 'UP') {
-          return 'is-primary';
-        }
-        if (this.application.status === 'RESTRICTED') {
-          return 'is-warning';
-        }
-        if (this.application.status === 'DOWN') {
-          return 'is-danger';
-        }
-        if (this.application.status === 'OUT_OF_SERVICE') {
-          return 'is-danger';
-        }
-        if (this.application.status === 'OFFLINE') {
-          return 'is-light';
-        }
-        return 'is-light';
-      }
+    isExpanded: {
+      type: Boolean,
+      default: false,
     },
-    methods: {
-      hasActiveNotificationFilter(object) {
-        return this.notificationFilters.some(f => f.affects(object));
+    notificationFilters: {
+      type: Array,
+      default: () => [],
+    },
+    hasNotificationFiltersSupport: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  computed: {
+    headerClass() {
+      if (!this.isExpanded) {
+        return "is-selectable";
       }
-    }
-  }
+      if (this.application.status === "UP") {
+        return "is-primary";
+      }
+      if (this.application.status === "RESTRICTED") {
+        return "is-warning";
+      }
+      if (this.application.status === "DOWN") {
+        return "is-danger";
+      }
+      if (this.application.status === "OUT_OF_SERVICE") {
+        return "is-danger";
+      }
+      if (this.application.status === "OFFLINE") {
+        return "is-light";
+      }
+      return "is-light";
+    },
+  },
+  methods: {
+    hasActiveNotificationFilter(object) {
+      return this.notificationFilters.some((f) => f.affects(object));
+    },
+  },
+};
 </script>
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .application-list-item {
-    transition: all $easing $speed;
+.application-list-item {
+  transition: all $easing $speed;
 
-    &.is-active {
-      margin: 0.75rem -0.75rem;
-      max-width: unset;
+  &.is-active {
+    margin: 0.75rem -0.75rem;
+    max-width: unset;
+  }
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    *:not(.is-active) > &:hover {
+      background-color: $white-bis;
     }
 
-    &__header {
+    & > *:not(:first-child) {
+      margin-left: 12px;
+    }
+
+    .title {
+      flex-grow: 1;
+      flex-basis: 50%;
+      margin: 0.75rem 0;
+    }
+
+    &__actions {
+      justify-self: end;
+      opacity: 0;
+      transition: all $easing $speed;
+      will-change: opacity;
+      margin-right: ($gap / 2);
       display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
 
-      *:not(.is-active) > &:hover {
-        background-color: $white-bis;
+      *:hover > &,
+      *.is-active & {
+        opacity: 1;
       }
 
-      & > *:not(:first-child) {
-        margin-left: 12px;
-      }
-
-      .title {
-        flex-grow: 1;
-        flex-basis: 50%;
-        margin: 0.75rem 0;
-      }
-
-      &__actions {
-        justify-self: end;
-        opacity: 0;
-        transition: all $easing $speed;
-        will-change: opacity;
-        margin-right: ($gap / 2);
-        display: flex;
-
-        *:hover > &,
-        *.is-active & {
-          opacity: 1;
-        }
-
-        & > * {
-          width: ($gap / 2);
-          height: ($gap / 2);
-        }
+      & > * {
+        width: ($gap / 2);
+        height: ($gap / 2);
       }
     }
   }
+}
 </style>

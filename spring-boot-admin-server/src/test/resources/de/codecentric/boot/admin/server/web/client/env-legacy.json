@@ -1,7 +1,5 @@
 {
-  "profiles": [
-    "one"
-  ],
+  "profiles": ["one"],
   "server.ports": {
     "local.server.port": 9000
   },

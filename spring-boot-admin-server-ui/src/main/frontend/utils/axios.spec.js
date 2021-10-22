@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-import {redirectOn401} from './axios';
+import { redirectOn401 } from "./axios";
 
-describe('redirectOn401', () => {
+describe("redirectOn401", () => {
   beforeEach(() => {
-    Object.defineProperty(window, 'location', {
+    Object.defineProperty(window, "location", {
       writable: true,
       value: {
         assign: jest.fn(),
-        href: 'http://example.com/'
-      }
+        href: "http://example.com/",
+      },
     });
-  })
+  });
 
-  it('should not redirect on 500', async () => {
+  it("should not redirect on 500", async () => {
     const error = {
       response: {
-        status: 500
-      }
+        status: 500,
+      },
     };
 
     try {
@@ -43,13 +43,11 @@ describe('redirectOn401', () => {
     expect(window.location.assign).not.toBeCalled();
   });
 
-  it('should redirect on 401', async () => {
-
-
+  it("should redirect on 401", async () => {
     const error = {
       response: {
-        status: 401
-      }
+        status: 401,
+      },
     };
 
     try {
@@ -58,14 +56,16 @@ describe('redirectOn401', () => {
       expect(e).toBe(error);
     }
 
-    expect(window.location.assign).toBeCalledWith('login?redirectTo=http%3A%2F%2Fexample.com%2F');
+    expect(window.location.assign).toBeCalledWith(
+      "login?redirectTo=http%3A%2F%2Fexample.com%2F"
+    );
   });
 
-  it('should not redirect on 401 for predicate yields false', async () => {
+  it("should not redirect on 401 for predicate yields false", async () => {
     const error = {
       response: {
-        status: 401
-      }
+        status: 401,
+      },
     };
 
     try {

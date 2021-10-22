@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-import {render} from '@/test-utils';
-import SbaConfirmButton from './sba-confirm-button';
-import userEvent from '@testing-library/user-event';
-import {screen} from '@testing-library/vue';
+import { render } from "@/test-utils";
+import SbaConfirmButton from "./sba-confirm-button";
+import userEvent from "@testing-library/user-event";
+import { screen } from "@testing-library/vue";
 
-describe('SbaConfirmButton', function () {
+describe("SbaConfirmButton", function () {
   let emitted;
 
   beforeEach(() => {
-    const vm = render(SbaConfirmButton, {slots: {default: 'Execute'}})
+    const vm = render(SbaConfirmButton, { slots: { default: "Execute" } });
     emitted = vm.emitted;
-  })
+  });
 
-  it('should not emit when clicked once', async () => {
-    userEvent.click(await screen.findByRole('button', {name: 'Execute'}));
+  it("should not emit when clicked once", async () => {
+    userEvent.click(await screen.findByRole("button", { name: "Execute" }));
 
     expect(emitted().click).toBeUndefined();
   });
 
-  it('should emit when click confirmed', async () => {
-    userEvent.click(await screen.findByRole('button', {name: 'Execute'}));
-    userEvent.click(await screen.findByRole('button', {name: 'Confirm'}));
+  it("should emit when click confirmed", async () => {
+    userEvent.click(await screen.findByRole("button", { name: "Execute" }));
+    userEvent.click(await screen.findByRole("button", { name: "Confirm" }));
 
     expect(emitted().click).toBeDefined();
   });
-
 });

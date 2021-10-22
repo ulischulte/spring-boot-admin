@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import merge from 'lodash/merge';
+import merge from "lodash/merge";
 
 const DEFAULT_CONFIG = {
   uiSettings: {
-    brand: '<img src="assets/img/icon-spring-boot-admin.svg"><span>Spring Boot Admin</span>',
+    brand:
+      '<img src="assets/img/icon-spring-boot-admin.svg"><span>Spring Boot Admin</span>',
     rememberMeEnabled: true,
     externalViews: [],
-    favicon: 'assets/img/favicon.png',
-    faviconDanger: 'assets/img/favicon-danger.png',
+    favicon: "assets/img/favicon.png",
+    faviconDanger: "assets/img/favicon-danger.png",
     notificationFilterEnabled: false,
     routes: [],
     availableLanguages: [],
@@ -33,19 +34,19 @@ const DEFAULT_CONFIG = {
       gc: 2500,
       process: 2500,
       memory: 2500,
-      threads: 2500
-    }
+      threads: 2500,
+    },
   },
   user: null,
   extensions: [],
   externalViews: [],
   csrf: {
-    parameterName: '_csrf',
-    headerName: 'X-XSRF-TOKEN'
+    parameterName: "_csrf",
+    headerName: "X-XSRF-TOKEN",
   },
   use: function (ext) {
     this.extensions.push(ext);
-  }
+  },
 };
 
-export default merge(DEFAULT_CONFIG, global.SBA)
+export default merge(DEFAULT_CONFIG, global.SBA);

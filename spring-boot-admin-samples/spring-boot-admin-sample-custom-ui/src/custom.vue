@@ -21,13 +21,14 @@
 <script>
 export default {
   props: {
-    applications: { //<1>
+    applications: {
+      //<1>
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   methods: {
-    stringify: JSON.stringify
-  }
+    stringify: JSON.stringify,
+  },
 };
 </script>
