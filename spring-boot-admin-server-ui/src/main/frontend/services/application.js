@@ -14,83 +14,96 @@
  * limitations under the License.
  */
 
-import axios, {redirectOn401} from '@/utils/axios';
-import waitForPolyfill from '@/utils/eventsource-polyfill';
-import {concat, from, ignoreElements, Observable} from '@/utils/rxjs';
-import uri from '@/utils/uri';
-import sortBy from 'lodash/sortBy';
-import Instance from './instance';
+import axios, { redirectOn401 } from "@/utils/axios";
+import waitForPolyfill from "@/utils/eventsource-polyfill";
+import { concat, from, ignoreElements, Observable } from "@/utils/rxjs";
+import uri from "@/utils/uri";
+import sortBy from "lodash/sortBy";
+import Instance from "./instance";
 
 const actuatorMimeTypes = [
-  'application/vnd.spring-boot.actuator.v2+json',
-  'application/vnd.spring-boot.actuator.v1+json',
-  'application/json'
+  "application/vnd.spring-boot.actuator.v2+json",
+  "application/vnd.spring-boot.actuator.v1+json",
+  "application/json",
 ];
 
 export const hasMatchingContentType = (contentType, compatibleContentTypes) =>
-  Boolean(contentType) && compatibleContentTypes.includes(contentType.replace(/;.*$/, ''));
+  Boolean(contentType) &&
+  compatibleContentTypes.includes(contentType.replace(/;.*$/, ""));
 
-export const convertBody = (responses) => responses.map(res => {
-  if (res.body && hasMatchingContentType(res.contentType, actuatorMimeTypes)) {
-    return {
-      ...res,
-      body: JSON.parse(res.body)
+export const convertBody = (responses) =>
+  responses.map((res) => {
+    if (
+      res.body &&
+      hasMatchingContentType(res.contentType, actuatorMimeTypes)
+    ) {
+      return {
+        ...res,
+        body: JSON.parse(res.body),
+      };
     }
-  }
-  return res;
-});
+    return res;
+  });
 
 class Application {
-  constructor({name, instances, ...application}) {
+  constructor({ name, instances, ...application }) {
     Object.assign(this, application);
     this.name = name;
     this.axios = axios.create({
       baseURL: uri`applications/${this.name}/`,
     });
-    this.axios.interceptors.response.use(response => response, redirectOn401()
+    this.axios.interceptors.response.use(
+      (response) => response,
+      redirectOn401()
     );
-    this.instances = sortBy(instances.map(i => new Instance(i), [instance => instance.registration.healthUrl]));
+    this.instances = sortBy(
+      instances.map(
+        (i) => new Instance(i),
+        [(instance) => instance.registration.healthUrl]
+      )
+    );
   }
 
   filterInstances(predicate) {
     return new Application({
       ...this,
-      instances: this.instances.filter(predicate)
-    })
+      instances: this.instances.filter(predicate),
+    });
   }
 
   findInstance(instanceId) {
-    return this.instances.find(instance => instance.id === instanceId);
+    return this.instances.find((instance) => instance.id === instanceId);
   }
 
   get isUnregisterable() {
-    return this.instances.findIndex(i => i.isUnregisterable) >= 0;
+    return this.instances.findIndex((i) => i.isUnregisterable) >= 0;
   }
 
   async unregister() {
-    return this.axios.delete('', {
-      headers: {'Accept': 'application/json'}
-    })
+    return this.axios.delete("", {
+      headers: { Accept: "application/json" },
+    });
   }
 
   static async list() {
-    return axios.get('applications', {
-      headers: {'Accept': 'application/json'},
-      transformResponse: Application._transformResponse
+    return axios.get("applications", {
+      headers: { Accept: "application/json" },
+      transformResponse: Application._transformResponse,
     });
   }
 
   static getStream() {
     return concat(
       from(waitForPolyfill()).pipe(ignoreElements()),
-      Observable.create(observer => {
-        const eventSource = new EventSource('applications');
-        eventSource.onmessage = message => observer.next({
-          ...message,
-          data: Application._transformResponse(message.data)
-        });
+      Observable.create((observer) => {
+        const eventSource = new EventSource("applications");
+        eventSource.onmessage = (message) =>
+          observer.next({
+            ...message,
+            data: Application._transformResponse(message.data),
+          });
 
-        eventSource.onerror = err => observer.error(err);
+        eventSource.onerror = (err) => observer.error(err);
         return () => eventSource.close();
       })
     );
@@ -98,18 +111,24 @@ class Application {
 
   async fetchLoggers() {
     const responses = convertBody(
-      (await this.axios.get(uri`actuator/loggers`, {headers: {'Accept': actuatorMimeTypes.join(',')}})).data
+      (
+        await this.axios.get(uri`actuator/loggers`, {
+          headers: { Accept: actuatorMimeTypes.join(",") },
+        })
+      ).data
     );
-    return {responses};
+    return { responses };
   }
 
   async configureLogger(name, level) {
-    const responses = (await this.axios.post(
-      uri`actuator/loggers/${name}`,
-      {configuredLevel: level},
-      {headers: {'Content-Type': 'application/json'}}
-    )).data;
-    return {responses};
+    const responses = (
+      await this.axios.post(
+        uri`actuator/loggers/${name}`,
+        { configuredLevel: level },
+        { headers: { "Content-Type": "application/json" } }
+      )
+    ).data;
+    return { responses };
   }
 
   async refreshContext() {
@@ -126,8 +145,8 @@ class Application {
     }
     const json = JSON.parse(data);
     if (json instanceof Array) {
-      const applications = json.map(j => new Application(j));
-      return sortBy(applications, [item => item.name]);
+      const applications = json.map((j) => new Application(j));
+      return sortBy(applications, [(item) => item.name]);
     }
     return new Application(json);
   }

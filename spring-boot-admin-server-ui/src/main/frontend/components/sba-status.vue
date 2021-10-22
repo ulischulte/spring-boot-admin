@@ -16,8 +16,10 @@
 
 <template>
   <div class="application-status">
-    <font-awesome-icon :icon="icon" class="application-status__icon"
-                       :class="`application-status__icon--${status}`"
+    <font-awesome-icon
+      :icon="icon"
+      class="application-status__icon"
+      :class="`application-status__icon--${status}`"
     />
     <small v-if="date">
       <sba-time-ago :date="date" />
@@ -26,68 +28,68 @@
 </template>
 
 <script>
-  import moment from 'moment';
-  import sbaTimeAgo from './sba-time-ago';
+import moment from "moment";
+import sbaTimeAgo from "./sba-time-ago";
 
-  const icons = {
-    'UP': 'check',
-    'RESTRICTED': 'exclamation',
-    'OUT_OF_SERVICE': 'ban',
-    'DOWN': 'times-circle',
-    'OFFLINE': 'minus-circle',
-    'UNKNOWN': 'question-circle'
-  };
+const icons = {
+  UP: "check",
+  RESTRICTED: "exclamation",
+  OUT_OF_SERVICE: "ban",
+  DOWN: "times-circle",
+  OFFLINE: "minus-circle",
+  UNKNOWN: "question-circle",
+};
 
-  export default {
-    components: {sbaTimeAgo},
-    props: {
-      status: {
-        type: String,
-        default: 'UNKNOWN'
-      },
-      date: {
-        type: [String, Date, Number, moment],
-        default: null
-      },
+export default {
+  components: { sbaTimeAgo },
+  props: {
+    status: {
+      type: String,
+      default: "UNKNOWN",
     },
-    computed: {
-      icon() {
-        return icons[this.status];
-      }
-    }
-  }
+    date: {
+      type: [String, Date, Number, moment],
+      default: null,
+    },
+  },
+  computed: {
+    icon() {
+      return icons[this.status];
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .application-status {
-    text-align: center;
-    line-height: 1rem;
-    display: inline-flex;
-    flex-direction: column;
+.application-status {
+  text-align: center;
+  line-height: 1rem;
+  display: inline-flex;
+  flex-direction: column;
 
-    &__icon {
-      color: gray;
-      margin: 0 auto;
+  &__icon {
+    color: gray;
+    margin: 0 auto;
 
-      &--UP {
-        color: $success;
-      }
+    &--UP {
+      color: $success;
+    }
 
-      &--RESTRICTED {
-        color: $warning;
-      }
+    &--RESTRICTED {
+      color: $warning;
+    }
 
-      &--OUT_OF_SERVICE,
-      &--DOWN {
-        color: $danger;
-      }
+    &--OUT_OF_SERVICE,
+    &--DOWN {
+      color: $danger;
+    }
 
-      &--UNKNOWN,
-      &--OFFLINE {
-        color: $grey;
-      }
+    &--UNKNOWN,
+    &--OFFLINE {
+      color: $grey;
     }
   }
+}
 </style>

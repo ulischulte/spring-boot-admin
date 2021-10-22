@@ -31,9 +31,7 @@
         "scope": "singleton",
         "type": "org.springframework.cloud.config.client.ConfigServicePropertySourceLocator",
         "resource": "org.springframework.cloud.config.client.ConfigServiceBootstrapConfiguration",
-        "dependencies": [
-          "configClientProperties"
-        ]
+        "dependencies": ["configClientProperties"]
       }
     ]
   }

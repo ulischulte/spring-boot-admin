@@ -19,17 +19,13 @@
     <div class="level-item has-text-centered">
       <div>
         <p class="heading" v-text="$t('applications.applications')" />
-        <p class="title" v-text="applicationsCount">
-          1
-        </p>
+        <p class="title" v-text="applicationsCount">1</p>
       </div>
     </div>
     <div class="level-item has-text-centered">
       <div>
         <p class="heading" v-text="$t('applications.instances')" />
-        <p class="title" v-text="instancesCount">
-          1
-        </p>
+        <p class="title" v-text="instancesCount">1</p>
       </div>
     </div>
     <div class="level-item has-text-centered">
@@ -45,25 +41,33 @@
   </div>
 </template>
 <script>
-  export default {
-    props: {
-      applications: {
-        type: Array,
-        default: () => [],
-      }
+export default {
+  props: {
+    applications: {
+      type: Array,
+      default: () => [],
     },
-    computed: {
-      applicationsCount() {
-        return this.applications.length;
-      },
-      instancesCount() {
-        return this.applications.reduce((current, next) => current + next.instances.length, 0);
-      },
-      downCount() {
-        return this.applications.reduce((current, next) => {
-          return current + (next.instances.filter(instance => instance.statusInfo.status !== 'UP').length);
-        }, 0);
-      }
-    }
-  }
+  },
+  computed: {
+    applicationsCount() {
+      return this.applications.length;
+    },
+    instancesCount() {
+      return this.applications.reduce(
+        (current, next) => current + next.instances.length,
+        0
+      );
+    },
+    downCount() {
+      return this.applications.reduce((current, next) => {
+        return (
+          current +
+          next.instances.filter(
+            (instance) => instance.statusInfo.status !== "UP"
+          ).length
+        );
+      }, 0);
+    },
+  },
+};
 </script>

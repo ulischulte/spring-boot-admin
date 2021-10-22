@@ -25,18 +25,15 @@
         <font-awesome-icon icon="cubes" />&nbsp;
         <span v-text="$t('term.application')" />
       </button>
-      <button
-        v-else
-        class="button"
-        @click="toggleScope('application')"
-      >
+      <button v-else class="button" @click="toggleScope('application')">
         <font-awesome-icon icon="cube" />&nbsp;&nbsp;
         <span v-text="$t('term.instance')" />
       </button>
     </div>
     <p class="help has-text-centered">
-      <span v-if="selectedScope === 'application'"
-            v-text="$t('term.affects_all_instances', {count: instanceCount})"
+      <span
+        v-if="selectedScope === 'application'"
+        v-text="$t('term.affects_all_instances', { count: instanceCount })"
       />
       <span v-else v-text="$t('term.affects_this_instance_only')" />
     </p>
@@ -48,22 +45,22 @@ export default {
   props: {
     instanceCount: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      selectedScope: 'instance'
-    }
+      selectedScope: "instance",
+    };
   },
   methods: {
     toggleScope(scope) {
       this.selectedScope = scope;
 
-      this.$emit('changeScope', this.selectedScope)
-    }
-  }
-}
+      this.$emit("changeScope", this.selectedScope);
+    },
+  },
+};
 </script>
 
 <style scoped>

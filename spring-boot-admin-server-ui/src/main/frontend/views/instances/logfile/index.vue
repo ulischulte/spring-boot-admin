@@ -15,31 +15,51 @@
   -->
 
 <template>
-  <div :class="{ 'is-loading' : !hasLoaded}" class="section logfile-view">
-    <sba-alert v-if="error" :error="error" :title="$t('instances.logfile.fetch_failed')" />
+  <div :class="{ 'is-loading': !hasLoaded }" class="section logfile-view">
+    <sba-alert
+      v-if="error"
+      :error="error"
+      :title="$t('instances.logfile.fetch_failed')"
+    />
 
-    <div v-if="hasLoaded" :class="{ 'logfile-view-actions--sticky' : !atTop }" class="logfile-view-actions">
+    <div
+      v-if="hasLoaded"
+      :class="{ 'logfile-view-actions--sticky': !atTop }"
+      class="logfile-view-actions"
+    >
       <div class="logfile-view-action">
         <label class="checkbox">
-          <input v-model="wrapLines" type="checkbox">
+          <input v-model="wrapLines" type="checkbox" />
           <span v-text="$t('instances.logfile.wrap_lines')" />
         </label>
       </div>
       <div class="logfile-view-action logfile-view-action__navigation">
-        <sba-icon-button :disabled="atTop" icon="step-backward" icon-class="rotated" size="lg"
-                         @click="scrollToTop"
+        <sba-icon-button
+          :disabled="atTop"
+          icon="step-backward"
+          icon-class="rotated"
+          size="lg"
+          @click="scrollToTop"
         />
-        <sba-icon-button :disabled="atBottom" icon="step-forward" icon-class="rotated" size="lg"
-                         @click="scrollToBottom"
+        <sba-icon-button
+          :disabled="atBottom"
+          icon="step-forward"
+          icon-class="rotated"
+          size="lg"
+          @click="scrollToBottom"
         />
       </div>
-      <a :href="`instances/${instance.id}/actuator/logfile`" class="logfile-view-action button" target="_blank">
+      <a
+        :href="`instances/${instance.id}/actuator/logfile`"
+        class="logfile-view-action button"
+        target="_blank"
+      >
         <font-awesome-icon icon="download" />&nbsp;
         <span v-text="$t('instances.logfile.download')" />
       </a>
     </div>
 
-    <div :class="{'log-viewer--wrap-lines': wrapLines}" class="log-viewer">
+    <div :class="{ 'log-viewer--wrap-lines': wrapLines }" class="log-viewer">
       <table>
         <tr v-if="skippedBytes">
           <td v-text="`skipped ${prettyBytes(skippedBytes)}`" />
@@ -51,21 +71,28 @@
 </template>
 
 <script>
-import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
-import autolink from '@/utils/autolink';
-import {animationFrameScheduler, concatAll, concatMap, map, of, tap} from '@/utils/rxjs';
-import AnsiUp from 'ansi_up';
-import chunk from 'lodash/chunk';
-import prettyBytes from 'pretty-bytes';
-import {VIEW_GROUP} from '../../index';
+import subscribing from "@/mixins/subscribing";
+import Instance from "@/services/instance";
+import autolink from "@/utils/autolink";
+import {
+  animationFrameScheduler,
+  concatAll,
+  concatMap,
+  map,
+  of,
+  tap,
+} from "@/utils/rxjs";
+import AnsiUp from "ansi_up";
+import chunk from "lodash/chunk";
+import prettyBytes from "pretty-bytes";
+import { VIEW_GROUP } from "../../index";
 
 export default {
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
   mixins: [subscribing],
   data: () => ({
@@ -74,79 +101,82 @@ export default {
     atBottom: true,
     atTop: false,
     skippedBytes: null,
-    wrapLines: true
+    wrapLines: true,
   }),
   created() {
     this.ansiUp = new AnsiUp();
   },
   mounted() {
-    window.addEventListener('scroll', this.onScroll);
+    window.addEventListener("scroll", this.onScroll);
   },
   beforeDestroy() {
-    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener("scroll", this.onScroll);
   },
   methods: {
     prettyBytes,
     createSubscription() {
       const vm = this;
       vm.error = null;
-      return this.instance.streamLogfile(1000)
+      return this.instance
+        .streamLogfile(1000)
         .pipe(
-          tap(part => vm.skippedBytes = vm.skippedBytes || part.skipped),
-          concatMap(part => chunk(part.addendum.split(/\r?\n/), 250)),
-          map(lines => of(lines, animationFrameScheduler)),
+          tap((part) => (vm.skippedBytes = vm.skippedBytes || part.skipped)),
+          concatMap((part) => chunk(part.addendum.split(/\r?\n/), 250)),
+          map((lines) => of(lines, animationFrameScheduler)),
           concatAll()
         )
         .subscribe({
-          next: lines => {
+          next: (lines) => {
             vm.hasLoaded = true;
-            lines.forEach(line => {
-              const row = document.createElement('tr')
-              const col = document.createElement('td');
-              const pre = document.createElement('pre');
+            lines.forEach((line) => {
+              const row = document.createElement("tr");
+              const col = document.createElement("td");
+              const pre = document.createElement("pre");
               pre.innerHTML = autolink(this.ansiUp.ansi_to_html(line));
-              col.appendChild(pre)
-              row.appendChild(col)
-              vm.$el.querySelector('.log-viewer > table').appendChild(row);
+              col.appendChild(pre);
+              row.appendChild(col);
+              vm.$el.querySelector(".log-viewer > table").appendChild(row);
             });
 
             if (vm.atBottom) {
               vm.scrollToBottom();
             }
           },
-          error: error => {
+          error: (error) => {
             vm.hasLoaded = true;
-            console.warn('Fetching logfile failed:', error);
+            console.warn("Fetching logfile failed:", error);
             vm.error = error;
-          }
+          },
         });
     },
     onScroll() {
       const scrollingEl = document.scrollingElement;
       const visibleHeight = document.documentElement.clientHeight;
-      this.atBottom = visibleHeight === scrollingEl.scrollHeight - scrollingEl.scrollTop;
+      this.atBottom =
+        visibleHeight === scrollingEl.scrollHeight - scrollingEl.scrollTop;
       this.atTop = scrollingEl.scrollTop <= 0;
     },
     scrollToTop() {
       document.scrollingElement.scrollTop = 0;
     },
     scrollToBottom() {
-      document.scrollingElement.scrollTop = document.scrollingElement.scrollHeight;
-    }
+      document.scrollingElement.scrollTop =
+        document.scrollingElement.scrollHeight;
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'instances/logfile',
-      parent: 'instances',
-      path: 'logfile',
+      name: "instances/logfile",
+      parent: "instances",
+      path: "logfile",
       component: this,
-      label: 'instances.logfile.label',
+      label: "instances.logfile.label",
       group: VIEW_GROUP.LOGGING,
       order: 200,
-      isEnabled: ({instance}) => instance.hasEndpoint('logfile')
+      isEnabled: ({ instance }) => instance.hasEndpoint("logfile"),
     });
-  }
-}
+  },
+};
 </script>
 
 <style lang="scss">
@@ -157,7 +187,7 @@ export default {
   position: relative;
 
   pre {
-    padding: 0 .5em;
+    padding: 0 0.5em;
     margin-bottom: 1px;
 
     &:hover {
@@ -181,7 +211,7 @@ export default {
 
   &-actions {
     top: $navbar-height-px;
-    right: ($gap /2);
+    right: ($gap / 2);
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -194,7 +224,7 @@ export default {
   }
 
   &-action {
-    margin-left: .5em;
+    margin-left: 0.5em;
 
     &__navigation {
       display: inline-flex;

@@ -21,40 +21,55 @@
         <span class="select">
           <select v-model="filter.type">
             <option value="username" v-text="$t('term.username')" />
-            <option value="sessionId" v-text="$t('instances.sessions.session_id')" />
+            <option
+              value="sessionId"
+              v-text="$t('instances.sessions.session_id')"
+            />
           </select>
         </span>
       </div>
       <div class="control is-expanded">
-        <input v-model="filter.value" class="input" type="text"
-               @paste="handlePaste" @keyup.enter="fetchSessionsByUsername()"
-        >
+        <input
+          v-model="filter.value"
+          class="input"
+          type="text"
+          @paste="handlePaste"
+          @keyup.enter="fetchSessionsByUsername()"
+        />
       </div>
     </div>
 
-    <sba-alert v-if="error" :error="error" :title="$t('instances.sessions.fetch_failed')" />
+    <sba-alert
+      v-if="error"
+      :error="error"
+      :title="$t('instances.sessions.fetch_failed')"
+    />
 
-    <sba-sessions-list :instance="instance" :is-loading="isLoading" :sessions="sessions"
-                       @deleted="fetch"
+    <sba-sessions-list
+      :instance="instance"
+      :is-loading="isLoading"
+      :sessions="sessions"
+      @deleted="fetch"
     />
   </section>
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import debounce from 'lodash/debounce';
-import isEqual from 'lodash/isEqual';
-import moment from 'moment'
-import sbaSessionsList from './sessions-list'
-import {VIEW_GROUP} from '../../index';
+import Instance from "@/services/instance";
+import debounce from "lodash/debounce";
+import isEqual from "lodash/isEqual";
+import moment from "moment";
+import sbaSessionsList from "./sessions-list";
+import { VIEW_GROUP } from "../../index";
 
-const regexUuid = /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
+const regexUuid =
+  /[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/;
 
 class Session {
-  constructor({creationTime, lastAccessedTime, ...session}) {
+  constructor({ creationTime, lastAccessedTime, ...session }) {
     Object.assign(this, session);
     this.creationTime = moment(creationTime);
-    this.lastAccessedTime = moment(lastAccessedTime)
+    this.lastAccessedTime = moment(lastAccessedTime);
   }
 }
 
@@ -62,15 +77,15 @@ export default {
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
-  components: {sbaSessionsList},
+  components: { sbaSessionsList },
   data: () => ({
     error: null,
-    filter: {value: '', type: null},
+    filter: { value: "", type: null },
     sessions: [],
-    isLoading: false
+    isLoading: false,
   }),
   methods: {
     fetch: debounce(async function () {
@@ -82,78 +97,84 @@ export default {
 
       this.isLoading = true;
       try {
-        if (this.filter.type === 'sessionId') {
-          this.sessions = await this.fetchSession()
+        if (this.filter.type === "sessionId") {
+          this.sessions = await this.fetchSession();
         } else {
-          this.sessions = await this.fetchSessionsByUsername()
+          this.sessions = await this.fetchSessionsByUsername();
         }
       } catch (error) {
-        console.warn('Fetching sessions failed:', error);
-        this.error = error
+        console.warn("Fetching sessions failed:", error);
+        this.error = error;
       }
-      this.isLoading = false
+      this.isLoading = false;
     }, 250),
     async fetchSession() {
       try {
         const response = await this.instance.fetchSession(this.filter.value);
-        return [new Session(response.data)]
+        return [new Session(response.data)];
       } catch (error) {
         if (error.response.status === 404) {
-          return []
+          return [];
         } else {
-          throw error
+          throw error;
         }
       }
     },
     async fetchSessionsByUsername() {
-      const response = await this.instance.fetchSessionsByUsername(this.filter.value);
-      return response.data.sessions.map(session => new Session(session))
+      const response = await this.instance.fetchSessionsByUsername(
+        this.filter.value
+      );
+      return response.data.sessions.map((session) => new Session(session));
     },
     handlePaste(event) {
-      const looksLikeSessionId = event.clipboardData.getData('text').match(regexUuid);
+      const looksLikeSessionId = event.clipboardData
+        .getData("text")
+        .match(regexUuid);
       if (looksLikeSessionId) {
-        this.filter.type = 'sessionId';
+        this.filter.type = "sessionId";
       }
-    }
+    },
   },
   watch: {
-    '$route.query': {
+    "$route.query": {
       immediate: true,
       handler() {
-        this.filter = Object.entries(this.$route.query)
-          .reduce((acc, [name, value]) => {
+        this.filter = Object.entries(this.$route.query).reduce(
+          (acc, [name, value]) => {
             acc.type = name;
             acc.value = value;
             return acc;
-          }, {type: 'username', value: ''});
-      }
+          },
+          { type: "username", value: "" }
+        );
+      },
     },
     filter: {
       deep: true,
       immediate: true,
       handler() {
-        const oldQuery = {[this.filter.type]: this.filter.value};
+        const oldQuery = { [this.filter.type]: this.filter.value };
         if (!isEqual(oldQuery, this.$route.query)) {
           this.$router.replace({
-            name: 'instances/sessions',
-            query: oldQuery
+            name: "instances/sessions",
+            query: oldQuery,
           });
         }
         this.fetch();
-      }
-    }
+      },
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'instances/sessions',
-      parent: 'instances',
-      path: 'sessions',
+      name: "instances/sessions",
+      parent: "instances",
+      path: "sessions",
       component: this,
-      label: 'instances.sessions.label',
+      label: "instances.sessions.label",
       group: VIEW_GROUP.SECURITY,
       order: 700,
-      isEnabled: ({instance}) => instance.hasEndpoint('sessions')
+      isEnabled: ({ instance }) => instance.hasEndpoint("sessions"),
     });
-  }
-}
+  },
+};
 </script>

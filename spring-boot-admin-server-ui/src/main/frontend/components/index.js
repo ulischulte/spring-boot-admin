@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-
 const components = [];
 
-const context = require.context(__dirname, false, /^(?:(?!.*\.(spec|stories)\.(js|vue)$).)*\.(js|vue)$/);
+const context = require.context(
+  __dirname,
+  false,
+  /^(?:(?!.*\.(spec|stories)\.(js|vue)$).)*\.(js|vue)$/
+);
 context.keys().forEach(function (key) {
   const name = /^(.\/)+(.*)\.(vue|js)$/.exec(key)[2];
-  components.push({name, component: context(key).default})
+  components.push({ name, component: context(key).default });
 });
 
 export default {
   install(Vue) {
-    components.forEach(component => Vue.component(component.name, component.component));
-  }
-}
+    components.forEach((component) =>
+      Vue.component(component.name, component.component)
+    );
+  },
+};

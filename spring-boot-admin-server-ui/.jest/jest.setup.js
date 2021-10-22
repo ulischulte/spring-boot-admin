@@ -1,13 +1,13 @@
-import '@testing-library/jest-dom';
-import {server} from '@/mocks/server';
+import "@testing-library/jest-dom";
+import { server } from "@/mocks/server";
 
 beforeAll(async () => {
-  server.listen()
-})
+  server.listen();
+});
 
-afterAll(done => {
+afterAll((done) => {
   setTimeout(() => {
     server.close();
     done();
   }, 500);
-})
+});

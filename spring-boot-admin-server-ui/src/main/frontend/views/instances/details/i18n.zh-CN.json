@@ -3,7 +3,7 @@
     "details": {
       "label": "细节",
       "fetch_failed": "获取指标失败。",
-      "cache":{
+      "cache": {
         "fetch_failed": "获取缓存指标失败。",
         "hit_ratio": "命中率",
         "hits": "命中次数",

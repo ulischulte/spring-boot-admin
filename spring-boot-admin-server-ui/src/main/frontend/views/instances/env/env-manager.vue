@@ -15,31 +15,54 @@
   -->
 
 <template>
-  <sba-panel :header-sticks-below="['#navigation']"
-             :title="$t('instances.env.manager')"
+  <sba-panel
+    :header-sticks-below="['#navigation']"
+    :title="$t('instances.env.manager')"
   >
     <datalist id="allPropertyNames">
       <option v-for="name in allPropertyNames" :key="name" v-text="name" />
     </datalist>
-    <div class="field is-horizontal" v-for="(prop, index) in managedProperties" :key="`managed-${index}`">
+    <div
+      class="field is-horizontal"
+      v-for="(prop, index) in managedProperties"
+      :key="`managed-${index}`"
+    >
       <div class="field-body">
         <div class="field">
           <div class="control">
-            <input class="input" type="text" placeholder="Property name" list="allPropertyNames"
-                   v-model="prop.name" @input="handlePropertyNameChange(prop, index)"
-            >
+            <input
+              class="input"
+              type="text"
+              placeholder="Property name"
+              list="allPropertyNames"
+              v-model="prop.name"
+              @input="handlePropertyNameChange(prop, index)"
+            />
           </div>
           <p class="help is-danger" v-text="prop.validation" />
         </div>
         <div class="field">
-          <div class="control has-icons-right" :class="{'is-loading' : prop.status === 'executing'}">
-            <input class="input" type="text" placeholder="Value" v-model="prop.input"
-                   @input="prop.status = null"
+          <div
+            class="control has-icons-right"
+            :class="{ 'is-loading': prop.status === 'executing' }"
+          >
+            <input
+              class="input"
+              type="text"
+              placeholder="Value"
+              v-model="prop.input"
+              @input="prop.status = null"
+            />
+            <span
+              class="icon is-right has-text-success"
+              v-if="prop.status === 'completed'"
             >
-            <span class="icon is-right has-text-success" v-if="prop.status === 'completed'">
               <font-awesome-icon icon="check" />
             </span>
-            <span class="icon is-right has-text-warning" v-else-if="prop.status === 'failed'">
+            <span
+              class="icon is-right has-text-warning"
+              v-else-if="prop.status === 'failed'"
+            >
               <font-awesome-icon icon="exclamation-triangle" />
             </span>
             <span class="icon is-right" v-else-if="prop.input !== prop.value">
@@ -53,24 +76,50 @@
       <div class="field-body">
         <div class="field is-grouped is-grouped-right">
           <div class="control">
-            <button class="button is-light"
-                    :class="{'is-loading' : resetStatus === 'executing', 'is-danger' : resetStatus === 'failed', 'is-success' : resetStatus === 'completed'}"
-                    :disabled="!hasManagedProperty || resetStatus === 'executing'"
-                    @click="resetEnvironment"
+            <button
+              class="button is-light"
+              :class="{
+                'is-loading': resetStatus === 'executing',
+                'is-danger': resetStatus === 'failed',
+                'is-success': resetStatus === 'completed',
+              }"
+              :disabled="!hasManagedProperty || resetStatus === 'executing'"
+              @click="resetEnvironment"
             >
-              <span v-if="resetStatus === 'completed'" v-text="$t('instances.env.context_resetted')" />
-              <span v-else-if="resetStatus === 'failed'" v-text="$t('instances.env.context_reset_failed')" />
+              <span
+                v-if="resetStatus === 'completed'"
+                v-text="$t('instances.env.context_resetted')"
+              />
+              <span
+                v-else-if="resetStatus === 'failed'"
+                v-text="$t('instances.env.context_reset_failed')"
+              />
               <span v-else v-text="$t('instances.env.context_reset')" />
             </button>
           </div>
           <div class="control">
-            <button class="button is-primary"
-                    :class="{'is-loading' : updateStatus === 'executing', 'is-danger' : updateStatus === 'failed', 'is-success' : updateStatus === 'completed'}"
-                    :disabled="hasErrorProperty || !hasChangedProperty || updateStatus === 'executing'"
-                    @click="updateEnvironment"
+            <button
+              class="button is-primary"
+              :class="{
+                'is-loading': updateStatus === 'executing',
+                'is-danger': updateStatus === 'failed',
+                'is-success': updateStatus === 'completed',
+              }"
+              :disabled="
+                hasErrorProperty ||
+                !hasChangedProperty ||
+                updateStatus === 'executing'
+              "
+              @click="updateEnvironment"
             >
-              <span v-if="updateStatus === 'completed'" v-text="$t('instances.env.context_updated')" />
-              <span v-else-if="updateStatus === 'failed'" v-text="$t('instances.env.context_update_failed')" />
+              <span
+                v-if="updateStatus === 'completed'"
+                v-text="$t('instances.env.context_updated')"
+              />
+              <span
+                v-else-if="updateStatus === 'failed'"
+                v-text="$t('instances.env.context_update_failed')"
+              />
               <span v-else v-text="$t('instances.env.context_update')" />
             </button>
           </div>
@@ -81,53 +130,72 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import {concatMap, filter, from, listen} from '@/utils/rxjs';
-import debounce from 'lodash/debounce';
-import uniq from 'lodash/uniq';
-
+import Instance from "@/services/instance";
+import { concatMap, filter, from, listen } from "@/utils/rxjs";
+import debounce from "lodash/debounce";
+import uniq from "lodash/uniq";
 
 export default {
   props: {
     instance: {
       type: Instance,
-      required: true
+      required: true,
     },
     propertySources: {
       type: Array,
-      default: () => []
-    }
+      default: () => [],
+    },
   },
   data: () => ({
     error: null,
     resetStatus: null,
     updateStatus: null,
-    managedProperties: [{
-      name: null,
-      input: null,
-      value: null,
-      status: null,
-      validation: null
-    }]
+    managedProperties: [
+      {
+        name: null,
+        input: null,
+        value: null,
+        status: null,
+        validation: null,
+      },
+    ],
   }),
   computed: {
     allPropertyNames() {
-      return uniq(this.propertySources.map(ps => ps.properties ? Object.keys(ps.properties) : [])
-        .reduce((result, names) => result.concat(names))
-        .sort());
+      return uniq(
+        this.propertySources
+          .map((ps) => (ps.properties ? Object.keys(ps.properties) : []))
+          .reduce((result, names) => result.concat(names))
+          .sort()
+      );
     },
     managerPropertySource() {
-      return this.propertySources.find(ps => ps.name === 'manager') || {name: 'manager', properties: {}};
+      return (
+        this.propertySources.find((ps) => ps.name === "manager") || {
+          name: "manager",
+          properties: {},
+        }
+      );
     },
     hasManagedProperty() {
-      return this.managedProperties.findIndex(property => !!property.name) >= 0;
+      return (
+        this.managedProperties.findIndex((property) => !!property.name) >= 0
+      );
     },
     hasChangedProperty() {
-      return this.managedProperties.findIndex(property => property.input !== property.value) >= 0;
+      return (
+        this.managedProperties.findIndex(
+          (property) => property.input !== property.value
+        ) >= 0
+      );
     },
     hasErrorProperty() {
-      return this.managedProperties.findIndex(property => property.validation !== null) >= 0;
-    }
+      return (
+        this.managedProperties.findIndex(
+          (property) => property.validation !== null
+        ) >= 0
+      );
+    },
   },
   methods: {
     handlePropertyNameChange: debounce(function (prop, idx) {
@@ -137,7 +205,7 @@ export default {
           input: null,
           value: null,
           status: null,
-          validation: null
+          validation: null,
         });
       }
     }, 250),
@@ -145,45 +213,52 @@ export default {
       const vm = this;
       from(vm.managedProperties)
         .pipe(
-          filter(property => !!property.name && property.input !== property.value),
-          listen(status => vm.updateStatus = status),
-          concatMap(
-            property => from(vm.instance.setEnv(property.name, property.input))
-              .pipe(listen(status => property.status = status))
+          filter(
+            (property) => !!property.name && property.input !== property.value
+          ),
+          listen((status) => (vm.updateStatus = status)),
+          concatMap((property) =>
+            from(vm.instance.setEnv(property.name, property.input)).pipe(
+              listen((status) => (property.status = status))
+            )
           )
         )
         .subscribe({
           complete: () => {
-            setTimeout(() => vm.updateStatus = null, 2500);
-            return vm.$emit('update');
+            setTimeout(() => (vm.updateStatus = null), 2500);
+            return vm.$emit("update");
           },
-          error: () => vm.$emit('update')
+          error: () => vm.$emit("update"),
         });
     },
     resetEnvironment() {
       const vm = this;
       from(vm.instance.resetEnv())
-        .pipe(listen(status => vm.resetStatus = status))
+        .pipe(listen((status) => (vm.resetStatus = status)))
         .subscribe({
           complete: () => {
-            vm.managedProperties = [{
-              name: null,
-              input: null,
-              value: null,
-              status: null,
-              validation: null
-            }];
-            setTimeout(() => vm.resetStatus = null, 2500);
-            return vm.$emit('refresh');
+            vm.managedProperties = [
+              {
+                name: null,
+                input: null,
+                value: null,
+                status: null,
+                validation: null,
+              },
+            ];
+            setTimeout(() => (vm.resetStatus = null), 2500);
+            return vm.$emit("refresh");
           },
-          error: () => vm.$emit('refresh')
+          error: () => vm.$emit("refresh"),
         });
     },
     updateManagedProperties(manager) {
       Object.entries(manager.properties).forEach(([name, property]) => {
-        const managedProperty = this.managedProperties.find(property => property.name === name);
+        const managedProperty = this.managedProperties.find(
+          (property) => property.name === name
+        );
         if (managedProperty) {
-          managedProperty.value = property.value
+          managedProperty.value = property.value;
         } else {
           const idx = this.managedProperties.length - 1;
           this.managedProperties.splice(idx, 0, {
@@ -191,43 +266,42 @@ export default {
             input: property.value,
             value: property.value,
             status: null,
-            validation: null
-          })
+            validation: null,
+          });
         }
       });
-    }
+    },
   },
   watch: {
     managerPropertySource: {
-      handler: 'updateManagedProperties',
-      immediate: true
+      handler: "updateManagedProperties",
+      immediate: true,
     },
     managedProperties: {
       deep: true,
       handler() {
-        const counts = this.managedProperties.reduce(
-          (acc, v) => {
-            if (v.name) {
-              acc[v.name] = (acc[v.name] || 0) + 1;
-            }
-            return acc;
-          }, {});
-        this.managedProperties.forEach(property => {
+        const counts = this.managedProperties.reduce((acc, v) => {
+          if (v.name) {
+            acc[v.name] = (acc[v.name] || 0) + 1;
+          }
+          return acc;
+        }, {});
+        this.managedProperties.forEach((property) => {
           if (!property.name) {
             if (property.input) {
-              property.validation = 'Property name is required';
+              property.validation = "Property name is required";
             }
             return;
           }
           const count = counts[property.name] || 0;
           if (count > 1) {
-            property.validation = 'Property name must be unique';
+            property.validation = "Property name must be unique";
             return;
           }
           property.validation = null;
         });
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 </script>

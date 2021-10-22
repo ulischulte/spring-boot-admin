@@ -26,92 +26,96 @@
         />
       </div>
       <div class="instances__view">
-        <router-view v-if="instance" :instance="instance" :application="application" />
+        <router-view
+          v-if="instance"
+          :instance="instance"
+          :application="application"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import InstanceSidebar from './sidebar';
+import InstanceSidebar from "./sidebar";
 
-  export default {
-    components: {InstanceSidebar},
-    props: {
-      instanceId: {
-        type: String,
-        required: true
-      },
-      views: {
-        type: Array,
-        default: () => []
-      },
-      applications: {
-        type: Array,
-        default: () => [],
-      },
-      error: {
-        type: Error,
-        default: null
-      }
+export default {
+  components: { InstanceSidebar },
+  props: {
+    instanceId: {
+      type: String,
+      required: true,
     },
-    computed: {
-      instance() {
-        return this.applications.findInstance(this.instanceId);
-      },
-      application() {
-        return this.applications.findApplicationForInstance(this.instanceId);
-      }
+    views: {
+      type: Array,
+      default: () => [],
     },
-    install({viewRegistry}) {
-      viewRegistry.addView({
-        name: 'instances',
-        path: '/instances/:instanceId',
-        component: this,
-        props: true,
-        isEnabled() {
-          return false;
-        }
-      });
-    }
-  }
+    applications: {
+      type: Array,
+      default: () => [],
+    },
+    error: {
+      type: Error,
+      default: null,
+    },
+  },
+  computed: {
+    instance() {
+      return this.applications.findInstance(this.instanceId);
+    },
+    application() {
+      return this.applications.findApplicationForInstance(this.instanceId);
+    },
+  },
+  install({ viewRegistry }) {
+    viewRegistry.addView({
+      name: "instances",
+      path: "/instances/:instanceId",
+      component: this,
+      props: true,
+      isEnabled() {
+        return false;
+      },
+    });
+  },
+};
 </script>
 
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  $sidebar-width-px: 220px;
+$sidebar-width-px: 220px;
 
-  .instances {
+.instances {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+
+  &__body {
     display: flex;
     flex-grow: 1;
-    flex-direction: column;
-
-    &__body {
-      display: flex;
-      flex-grow: 1;
-    }
-
-    &__view,
-    &__sidebar {
-      position: relative;
-    }
-
-    &__sidebar {
-      z-index: 20;
-      position: fixed;
-      top: $navbar-height-px;
-      bottom: 0;
-      left: 0;
-      width: $sidebar-width-px;
-    }
-
-    &__view {
-      flex-grow: 1;
-      flex-shrink: 1;
-      z-index: 10;
-      max-width: 100%;
-      padding-left: $sidebar-width-px;
-    }
   }
+
+  &__view,
+  &__sidebar {
+    position: relative;
+  }
+
+  &__sidebar {
+    z-index: 20;
+    position: fixed;
+    top: $navbar-height-px;
+    bottom: 0;
+    left: 0;
+    width: $sidebar-width-px;
+  }
+
+  &__view {
+    flex-grow: 1;
+    flex-shrink: 1;
+    z-index: 10;
+    max-width: 100%;
+    padding-left: $sidebar-width-px;
+  }
+}
 </style>

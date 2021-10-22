@@ -25,38 +25,42 @@
           </td>
         </tr>
       </table>
-      <p v-else class="is-muted" v-text="$t('instances.details.metadata.No metadata provided.')" />
+      <p
+        v-else
+        class="is-muted"
+        v-text="$t('instances.details.metadata.No metadata provided.')"
+      />
     </div>
   </sba-panel>
 </template>
 
 <script>
-  import Instance from '@/services/instance';
+import Instance from "@/services/instance";
 
-  export default {
-    props: {
-      instance: {
-        type: Instance,
-        required: true
-      }
+export default {
+  props: {
+    instance: {
+      type: Instance,
+      required: true,
     },
-    computed: {
-      metadata() {
-        return this.instance.registration.metadata;
-      },
-      isEmptyMetadata() {
-        return Object.keys(this.metadata).length <= 0;
-      }
-    }
-  }
+  },
+  computed: {
+    metadata() {
+      return this.instance.registration.metadata;
+    },
+    isEmptyMetadata() {
+      return Object.keys(this.metadata).length <= 0;
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-  .metadata {
-    overflow: auto;
+.metadata {
+  overflow: auto;
 
-    &__key {
-      vertical-align: top;
-    }
+  &__key {
+    vertical-align: top;
   }
+}
 </style>

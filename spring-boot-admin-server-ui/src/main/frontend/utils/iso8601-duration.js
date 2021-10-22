@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-export * from 'iso8601-duration';
+export * from "iso8601-duration";
 
 /**
  * Convert ISO8601 duration object to milliseconds
@@ -27,10 +27,10 @@ export * from 'iso8601-duration';
  */
 export const toMilliseconds = (duration) => {
   let result = duration.seconds;
-  result += (duration.minutes * 60);
-  result += (duration.hours * 60 * 60);
-  result += (duration.days * 60 * 60 * 24);
-  result += (duration.weeks * 60 * 60 * 24 * 7);
+  result += duration.minutes * 60;
+  result += duration.hours * 60 * 60;
+  result += duration.days * 60 * 60 * 24;
+  result += duration.weeks * 60 * 60 * 24 * 7;
 
   return result * 1000;
-}
+};

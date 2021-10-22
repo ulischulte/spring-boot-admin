@@ -1,6 +1,5 @@
 {
-  "groups": [
-  ],
+  "groups": [],
   "properties": [
     {
       "name": "spring.boot.admin.hazelcast.enabled",

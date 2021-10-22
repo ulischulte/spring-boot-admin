@@ -15,44 +15,45 @@
  */
 
 /* global SBA */
-import custom from './custom';
-import customEndpoint from './custom-endpoint';
+import custom from "./custom";
+import customEndpoint from "./custom-endpoint";
 
 // tag::customization-ui-toplevel[]
 SBA.use({
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'custom',  //<1>
-      path: '/custom', //<2>
+      name: "custom", //<1>
+      path: "/custom", //<2>
       component: custom, //<3>
-      label: 'Custom', //<4>
+      label: "Custom", //<4>
       order: 1000, //<5>
     });
-  }
+  },
 });
 // end::customization-ui-toplevel[]
 
 // tag::customization-ui-endpoint[]
 SBA.use({
-  install({viewRegistry, vueI18n}) {
+  install({ viewRegistry, vueI18n }) {
     viewRegistry.addView({
-      name: 'instances/custom',
-      parent: 'instances', // <1>
-      path: 'custom',
+      name: "instances/custom",
+      parent: "instances", // <1>
+      path: "custom",
       component: customEndpoint,
-      label: 'Custom',
-      group: 'custom', // <2>
+      label: "Custom",
+      group: "custom", // <2>
       order: 1000,
-      isEnabled: ({instance}) => instance.hasEndpoint('custom') // <3>
+      isEnabled: ({ instance }) => instance.hasEndpoint("custom"), // <3>
     });
 
-    vueI18n.mergeLocaleMessage('en', { // <4>
+    vueI18n.mergeLocaleMessage("en", {
+      // <4>
       sidebar: {
-        custom : {
-          title : "My Custom Extensions"
-        }
-      }
+        custom: {
+          title: "My Custom Extensions",
+        },
+      },
     });
-  }
+  },
 });
 // end::customization-ui-endpoint[]
