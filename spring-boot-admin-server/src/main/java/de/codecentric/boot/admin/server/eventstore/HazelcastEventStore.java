@@ -56,4 +56,9 @@ public class HazelcastEventStore extends ConcurrentMapEventStore {
 		}, true);
 	}
 
+	@Override
+	public HazelcastEventStore clone() {
+		return new HazelcastEventStore(null);
+	}
+
 }
