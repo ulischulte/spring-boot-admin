@@ -16,16 +16,18 @@
 
 <template>
   <div class="application-summary">
-    <sba-status :status="application.status"
-                :date="application.statusTimestamp"
-                class="application-summary__status"
+    <sba-status
+      :status="application.status"
+      :date="application.statusTimestamp"
+      class="application-summary__status"
     />
     <p class="application-summary__name">
-      <span v-text="application.name" /><br>
+      <span v-text="application.name" /><br />
       <span class="is-muted">
-        <a v-if="application.instances.length === 1"
-           v-text="healthUrl"
-           :href="healthUrl"
+        <a
+          v-if="application.instances.length === 1"
+          v-text="healthUrl"
+          :href="healthUrl"
         />
         <span v-else v-text="`${application.instances.length} instances`" />
       </span>
@@ -34,44 +36,47 @@
   </div>
 </template>
 <script>
-  import Application from '../../services/application';
+import Application from "../../services/application";
 
-  export default {
-    props: {
-      application: {
-        type: Application,
-        required: true
+export default {
+  props: {
+    application: {
+      type: Application,
+      required: true,
+    },
+  },
+  computed: {
+    healthUrl() {
+      if (this.application.instances.length === 1) {
+        return (
+          this.application.instances[0].registration.serviceUrl ||
+          this.application.instances[0].registration.healthUrl
+        );
+      } else {
+        return "";
       }
     },
-    computed: {
-      healthUrl() {
-        if (this.application.instances.length === 1) {
-          return this.application.instances[0].registration.serviceUrl || this.application.instances[0].registration.healthUrl;
-        } else {
-          return ''
-        }
-      }
-    }
-  }
+  },
+};
 </script>
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .application-summary {
-    display: contents;
+.application-summary {
+  display: contents;
 
-    &__status {
-      width: $gap;
-    }
-
-    &__name,
-    &__version {
-      flex-grow: 1;
-      flex-basis: 50%;
-    }
-
-    &__name.title {
-      margin: 0.75rem 0;
-    }
+  &__status {
+    width: $gap;
   }
+
+  &__name,
+  &__version {
+    flex-grow: 1;
+    flex-basis: 50%;
+  }
+
+  &__name.title {
+    margin: 0.75rem 0;
+  }
+}
 </style>

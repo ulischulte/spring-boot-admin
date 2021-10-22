@@ -27,41 +27,71 @@
     </thead>
     <tbody>
       <template v-for="event in events">
-        <tr class="is-selectable"
-            :class="{ 'auditevents__event--is-detailed' : showDetails[event.key] }"
-            @click="showDetails[event.key] ? $delete(showDetails, event.key) : $set(showDetails, event.key, true)"
-            :key="event.key"
+        <tr
+          class="is-selectable"
+          :class="{ 'auditevents__event--is-detailed': showDetails[event.key] }"
+          @click="
+            showDetails[event.key]
+              ? $delete(showDetails, event.key)
+              : $set(showDetails, event.key, true)
+          "
+          :key="event.key"
         >
           <td v-text="event.timestamp.format('L HH:mm:ss.SSS')" />
           <td>
-            <span v-text="event.type" class="tag"
-                  :class="{ 'is-success' : event.isSuccess(), 'is-danger' : event.isFailure() }"
+            <span
+              v-text="event.type"
+              class="tag"
+              :class="{
+                'is-success': event.isSuccess(),
+                'is-danger': event.isFailure(),
+              }"
             />
           </td>
           <td v-if="hasSessionEndpoint && event.principal">
-            <router-link v-text="event.principal"
-                         :to="{ name: 'instances/sessions', params: { 'instanceId' : instance.id }, query: { username : event.principal} }"
+            <router-link
+              v-text="event.principal"
+              :to="{
+                name: 'instances/sessions',
+                params: { instanceId: instance.id },
+                query: { username: event.principal },
+              }"
             />
           </td>
           <td v-else v-text="event.principal" />
           <td v-text="event.remoteAddress" />
           <td v-if="hasSessionEndpoint && event.sessionId">
-            <router-link v-text="event.sessionId"
-                         :to="{ name: 'instances/sessions', params: { 'instanceId' : instance.id }, query: { sessionId : event.sessionId } }"
+            <router-link
+              v-text="event.sessionId"
+              :to="{
+                name: 'instances/sessions',
+                params: { instanceId: instance.id },
+                query: { sessionId: event.sessionId },
+              }"
             />
           </td>
           <td v-else v-text="event.sessionId" />
         </tr>
         <tr :key="`${event.key}-detail`" v-if="showDetails[event.key]">
           <td colspan="5">
-            <pre class="auditevents__event-detail" v-text="toJson(event.data)" />
+            <pre
+              class="auditevents__event-detail"
+              v-text="toJson(event.data)"
+            />
           </td>
         </tr>
       </template>
       <tr v-if="events.length === 0">
         <td class="is-muted" colspan="5">
-          <p v-if="isLoading" class="is-loading" v-html="$t('instances.auditevents.loading_audit_events')" />
-          <p v-else v-html="$t('instances.auditevents.no_audit_events_found')" />
+          <p
+            v-if="isLoading"
+            class="is-loading"
+            v-html="$t('instances.auditevents.loading_audit_events')"
+          />
+          <p
+            v-else
+            v-html="$t('instances.auditevents.no_audit_events_found')"
+          />
         </td>
       </tr>
     </tbody>
@@ -69,55 +99,55 @@
 </template>
 
 <script>
-  import Instance from '@/services/instance';
-  import prettyBytes from 'pretty-bytes';
+import Instance from "@/services/instance";
+import prettyBytes from "pretty-bytes";
 
-  export default {
-    props: {
-      events: {
-        type: Array,
-        default: () => []
-      },
-      instance: {
-        type: Instance,
-        required: true
-      },
-      isLoading: {
-        type: Boolean,
-        default: false
-      }
+export default {
+  props: {
+    events: {
+      type: Array,
+      default: () => [],
     },
-    data: () => ({
-      showDetails: {}
-    }),
-    computed: {
-      hasSessionEndpoint() {
-        return this.instance.hasEndpoint('sessions');
-      }
+    instance: {
+      type: Instance,
+      required: true,
     },
-    methods: {
-      prettyBytes,
-      toJson(obj) {
-        return JSON.stringify(obj, null, 4);
-      }
-    }
-  }
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data: () => ({
+    showDetails: {},
+  }),
+  computed: {
+    hasSessionEndpoint() {
+      return this.instance.hasEndpoint("sessions");
+    },
+  },
+  methods: {
+    prettyBytes,
+    toJson(obj) {
+      return JSON.stringify(obj, null, 4);
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-  .auditevents {
-    table-layout: fixed;
+.auditevents {
+  table-layout: fixed;
 
-    td {
-      vertical-align: middle;
-    }
-
-    &__event--is-detailed td {
-      border: none !important;
-    }
-
-    &__event-detail {
-      overflow: auto;
-    }
+  td {
+    vertical-align: middle;
   }
+
+  &__event--is-detailed td {
+    border: none !important;
+  }
+
+  &__event-detail {
+    overflow: auto;
+  }
+}
 </style>

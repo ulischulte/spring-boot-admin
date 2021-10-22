@@ -15,34 +15,45 @@
   -->
 
 <template>
-  <section :class="{ 'is-loading' : !hasLoaded }" class="section">
+  <section :class="{ 'is-loading': !hasLoaded }" class="section">
     <template v-if="hasLoaded">
-      <sba-alert v-if="error" :error="error" :title="$t('instances.mappings.fetch_failed')" />
+      <sba-alert
+        v-if="error"
+        :error="error"
+        :title="$t('instances.mappings.fetch_failed')"
+      />
 
       <div v-if="isOldMetrics" class="message is-warning">
-        <div class="message-body" v-text="$t('instances.mappings.mappings_not_supported_spring_boot_1')" />
+        <div
+          class="message-body"
+          v-text="$t('instances.mappings.mappings_not_supported_spring_boot_1')"
+        />
       </div>
       <template v-for="(context, ctxName) in contexts">
         <h3 :key="ctxName" class="title" v-text="ctxName" />
 
-        <dispatcher-mappings v-if="hasDispatcherServlets(context)"
-                             :key="`${ctxName}_dispatcherServlets`"
-                             :dispatchers="context.mappings.dispatcherServlets"
+        <dispatcher-mappings
+          v-if="hasDispatcherServlets(context)"
+          :key="`${ctxName}_dispatcherServlets`"
+          :dispatchers="context.mappings.dispatcherServlets"
         />
 
-        <dispatcher-mappings v-if="hasDispatcherHandlers(context)"
-                             :key="`${ctxName}_dispatcherHandlers`"
-                             :dispatchers="context.mappings.dispatcherHandlers"
+        <dispatcher-mappings
+          v-if="hasDispatcherHandlers(context)"
+          :key="`${ctxName}_dispatcherHandlers`"
+          :dispatchers="context.mappings.dispatcherHandlers"
         />
 
-        <servlet-mappings v-if="hasServlet(context)"
-                          :key="`${ctxName}_servlets`"
-                          :servlets="context.mappings.servlets"
+        <servlet-mappings
+          v-if="hasServlet(context)"
+          :key="`${ctxName}_servlets`"
+          :servlets="context.mappings.servlets"
         />
 
-        <servlet-filter-mappings v-if="hasServletFilters(context)"
-                                 :key="`${ctxName}_servletFilters`"
-                                 :servlet-filters="context.mappings.servletFilters"
+        <servlet-filter-mappings
+          v-if="hasServletFilters(context)"
+          :key="`${ctxName}_servletFilters`"
+          :servlet-filters="context.mappings.servletFilters"
         />
       </template>
     </template>
@@ -50,25 +61,25 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import DispatcherMappings from '@/views/instances/mappings/DispatcherMappings';
-import ServletFilterMappings from '@/views/instances/mappings/ServletFilterMappings';
-import ServletMappings from '@/views/instances/mappings/ServletMappings';
-import {VIEW_GROUP} from '../../index';
+import Instance from "@/services/instance";
+import DispatcherMappings from "@/views/instances/mappings/DispatcherMappings";
+import ServletFilterMappings from "@/views/instances/mappings/ServletFilterMappings";
+import ServletMappings from "@/views/instances/mappings/ServletMappings";
+import { VIEW_GROUP } from "../../index";
 
 export default {
-  components: {DispatcherMappings, ServletMappings, ServletFilterMappings},
+  components: { DispatcherMappings, ServletMappings, ServletFilterMappings },
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     hasLoaded: false,
     error: null,
     contexts: null,
-    isOldMetrics: false
+    isOldMetrics: false,
   }),
   created() {
     this.fetchMappings();
@@ -90,29 +101,33 @@ export default {
       this.error = null;
       try {
         const res = await this.instance.fetchMappings();
-        if (res.headers['content-type'].includes('application/vnd.spring-boot.actuator.v2')) {
+        if (
+          res.headers["content-type"].includes(
+            "application/vnd.spring-boot.actuator.v2"
+          )
+        ) {
           this.contexts = res.data.contexts;
         } else {
           this.isOldMetrics = true;
         }
       } catch (error) {
-        console.warn('Fetching mappings failed:', error);
+        console.warn("Fetching mappings failed:", error);
         this.error = error;
       }
       this.hasLoaded = true;
-    }
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'instances/mappings',
-      parent: 'instances',
-      path: 'mappings',
-      label: 'instances.mappings.label',
+      name: "instances/mappings",
+      parent: "instances",
+      path: "mappings",
+      label: "instances.mappings.label",
       group: VIEW_GROUP.WEB,
       component: this,
       order: 450,
-      isEnabled: ({instance}) => instance.hasEndpoint('mappings')
+      isEnabled: ({ instance }) => instance.hasEndpoint("mappings"),
     });
-  }
-}
+  },
+};
 </script>

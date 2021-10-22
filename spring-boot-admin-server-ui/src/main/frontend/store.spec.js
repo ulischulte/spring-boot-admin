@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-import Application from '@/services/application';
-import {EMPTY} from '@/utils/rxjs';
-import Store from './store';
+import Application from "@/services/application";
+import { EMPTY } from "@/utils/rxjs";
+import Store from "./store";
 
-jest.mock('@/services/application');
+jest.mock("@/services/application");
 jest.setTimeout(500);
 
-describe('store', () => {
-  describe('given no registered applications', function () {
+describe("store", () => {
+  describe("given no registered applications", function () {
     Application.list = jest.fn(() => EMPTY);
     Application.getStream = jest.fn(() => EMPTY);
 
-    it('it should emit a connected event after start', async () => {
+    it("it should emit a connected event after start", async () => {
       const store = new Store();
 
-      const connectedEvent = new Promise(resolve => {
-        store.addEventListener('connected', resolve)
+      const connectedEvent = new Promise((resolve) => {
+        store.addEventListener("connected", resolve);
       });
 
       store.start();
       await connectedEvent;
       store.stop();
     });
-
   });
 });

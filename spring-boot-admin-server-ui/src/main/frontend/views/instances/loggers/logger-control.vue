@@ -29,7 +29,7 @@
     <div class="control">
       <button
         class="button is-light"
-        :class="{ 'is-loading' : getStatusForLevel(null) === 'executing' }"
+        :class="{ 'is-loading': getStatusForLevel(null) === 'executing' }"
         :disabled="!isConfigured || !allowReset"
         @click.stop="selectLevel(null)"
         v-text="$t('instances.loggers.reset')"
@@ -39,71 +39,75 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      value: {
-        type: Array,
-        required: true
-      },
-      levelOptions: {
-        type: Array,
-        required: true
-      },
-      allowReset: {
-        type: Boolean,
-        default: true
-      },
-      status: {
-        type: Object,
-        default: null
+export default {
+  props: {
+    value: {
+      type: Array,
+      required: true,
+    },
+    levelOptions: {
+      type: Array,
+      required: true,
+    },
+    allowReset: {
+      type: Boolean,
+      default: true,
+    },
+    status: {
+      type: Object,
+      default: null,
+    },
+  },
+  computed: {
+    isConfigured() {
+      return this.value.some((l) => Boolean(l.configuredLevel));
+    },
+  },
+  methods: {
+    hasEffectiveLevel(level) {
+      return this.value.some((l) => l.effectiveLevel === level);
+    },
+    hasConfiguredLevel(level) {
+      return this.value.some((l) => l.configuredLevel === level);
+    },
+    selectLevel(level) {
+      this.$emit("input", level);
+    },
+    getStatusForLevel(level) {
+      if (this.status && this.status.level === level) {
+        return this.status.status;
       }
     },
-    computed: {
-      isConfigured() {
-        return this.value.some(l => Boolean(l.configuredLevel))
-      },
+    cssClass(level) {
+      return {
+        "logger-control__level--inherited": !this.hasConfiguredLevel(level),
+        "is-active is-danger":
+          level === "TRACE" && this.hasEffectiveLevel("TRACE"),
+        "is-active is-warning":
+          level === "DEBUG" && this.hasEffectiveLevel("DEBUG"),
+        "is-active is-info": level === "INFO" && this.hasEffectiveLevel("INFO"),
+        "is-active is-success":
+          level === "WARN" && this.hasEffectiveLevel("WARN"),
+        "is-active is-light":
+          level === "ERROR" && this.hasEffectiveLevel("ERROR"),
+        "is-active is-black": level === "OFF" && this.hasEffectiveLevel("OFF"),
+        "is-loading": this.getStatusForLevel(level) === "executing",
+      };
     },
-    methods: {
-      hasEffectiveLevel(level) {
-        return this.value.some(l => l.effectiveLevel === level)
-      },
-      hasConfiguredLevel(level) {
-        return this.value.some(l => l.configuredLevel === level)
-      },
-      selectLevel(level) {
-        this.$emit('input', level);
-      },
-      getStatusForLevel(level) {
-        if (this.status && this.status.level === level) {
-          return this.status.status;
-        }
-      },
-      cssClass(level) {
-        return {
-          'logger-control__level--inherited': !this.hasConfiguredLevel(level),
-          'is-active is-danger': level === 'TRACE' && this.hasEffectiveLevel('TRACE'),
-          'is-active is-warning': level === 'DEBUG' && this.hasEffectiveLevel('DEBUG'),
-          'is-active is-info': level === 'INFO' && this.hasEffectiveLevel('INFO'),
-          'is-active is-success': level === 'WARN' && this.hasEffectiveLevel('WARN'),
-          'is-active is-light': level === 'ERROR' && this.hasEffectiveLevel('ERROR'),
-          'is-active is-black': level === 'OFF' && this.hasEffectiveLevel('OFF'),
-          'is-loading': this.getStatusForLevel(level) === 'executing'
-        };
-      }
-    }
-  }
+  },
+};
 </script>
 
 <style lang="scss">
-  .logger-control {
-    &__level {
-      &--inherited {
-        opacity: 0.5;
+.logger-control {
+  &__level {
+    &--inherited {
+      opacity: 0.5;
 
-        &:hover {
-          opacity: 1;
-        }
+      &:hover {
+        opacity: 1;
       }
     }
   }
+}
 </style>

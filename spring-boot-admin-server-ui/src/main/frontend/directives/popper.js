@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import Popper from 'popper.js';
+import Popper from "popper.js";
 
 const poppers = new WeakMap();
 
 const bind = (el, binding) => {
-  const reference = typeof binding.value === 'string' ? document.getElementById(binding.value) : binding.value;
+  const reference =
+    typeof binding.value === "string"
+      ? document.getElementById(binding.value)
+      : binding.value;
   if (reference) {
     const popper = new Popper(reference, el);
     poppers.set(el, popper);
@@ -37,11 +40,9 @@ export default {
   bind,
   update(el, binding) {
     if (binding.value === binding.oldValue) {
-      return
+      return;
     }
-    bind(el, binding)
+    bind(el, binding);
   },
-  unbind
-}
-
-
+  unbind,
+};

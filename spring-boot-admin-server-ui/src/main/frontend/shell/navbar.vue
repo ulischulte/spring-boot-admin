@@ -26,7 +26,7 @@
           <span />
         </div>
       </div>
-      <div class="navbar-menu" :class="{'is-active' : showMenu}">
+      <div class="navbar-menu" :class="{ 'is-active': showMenu }">
         <div class="navbar-end">
           <template v-for="view in enabledViews">
             <a
@@ -42,30 +42,45 @@
             <router-link
               v-else
               :key="view.name"
-              :to="{name: view.name}"
+              :to="{ name: view.name }"
               class="navbar-item"
             >
-              <component :is="view.handle" :applications="applications" :error="error" />
+              <component
+                :is="view.handle"
+                :applications="applications"
+                :error="error"
+              />
             </router-link>
           </template>
           <div class="navbar-item has-dropdown is-hoverable" v-if="userName">
             <a class="navbar-link">
-              <font-awesome-icon icon="user-circle" size="lg" />&nbsp;<span v-text="userName" />
+              <font-awesome-icon icon="user-circle" size="lg" />&nbsp;<span
+                v-text="userName"
+              />
             </a>
             <div class="navbar-dropdown">
               <a class="navbar-item">
                 <form action="logout" method="post">
-                  <input v-if="csrfToken" type="hidden" :name="csrfParameterName" :value="csrfToken">
+                  <input
+                    v-if="csrfToken"
+                    type="hidden"
+                    :name="csrfParameterName"
+                    :value="csrfToken"
+                  />
                   <button class="button is-icon" type="submit" value="logout">
-                    <font-awesome-icon icon="sign-out-alt" />&nbsp;<span v-text="$t('navbar.logout')" />
+                    <font-awesome-icon icon="sign-out-alt" />&nbsp;<span
+                      v-text="$t('navbar.logout')"
+                    />
                   </button>
                 </form>
               </a>
             </div>
           </div>
-          <navbar-item-language-selector v-if="availableLocales.length > 1" :current-locale="$i18n.locale"
-                                         :available-locales="availableLocales"
-                                         @localeChanged="changeLocale"
+          <navbar-item-language-selector
+            v-if="availableLocales.length > 1"
+            :current-locale="$i18n.locale"
+            :available-locales="availableLocales"
+            @localeChanged="changeLocale"
           />
         </div>
       </div>
@@ -74,31 +89,34 @@
 </template>
 
 <script>
-import sbaConfig from '@/sba-config'
-import {compareBy} from '@/utils/collections';
-import {getAvailableLocales} from '@/i18n';
-import moment from 'moment';
-import NavbarItemLanguageSelector from '@/shell/navbar-item-language-selector';
+import sbaConfig from "@/sba-config";
+import { compareBy } from "@/utils/collections";
+import { getAvailableLocales } from "@/i18n";
+import moment from "moment";
+import NavbarItemLanguageSelector from "@/shell/navbar-item-language-selector";
 
 const readCookie = (name) => {
-  const match = document.cookie.match(new RegExp('(^|;\\s*)(' + name + ')=([^;]*)'));
-  return (match ? decodeURIComponent(match[3]) : null);
+  const match = document.cookie.match(
+    new RegExp("(^|;\\s*)(" + name + ")=([^;]*)")
+  );
+  return match ? decodeURIComponent(match[3]) : null;
 };
 
 export default {
-  components: {NavbarItemLanguageSelector},
+  components: { NavbarItemLanguageSelector },
   data: () => ({
     showMenu: false,
-    brand: '<img src="assets/img/icon-spring-boot-admin.svg"><span>Spring Boot Admin</span>',
+    brand:
+      '<img src="assets/img/icon-spring-boot-admin.svg"><span>Spring Boot Admin</span>',
     userName: null,
     csrfToken: null,
     csrfParameterName: null,
-    currentLanguage: null
+    currentLanguage: null,
   }),
   props: {
     views: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     applications: {
       type: Array,
@@ -106,36 +124,40 @@ export default {
     },
     error: {
       type: Error,
-      default: null
-    }
+      default: null,
+    },
   },
   computed: {
     enabledViews() {
-      return this.views.filter(
-        view => view.handle && (typeof view.isEnabled === 'undefined' || view.isEnabled())
-      ).sort(compareBy(v => v.order));
+      return this.views
+        .filter(
+          (view) =>
+            view.handle &&
+            (typeof view.isEnabled === "undefined" || view.isEnabled())
+        )
+        .sort(compareBy((v) => v.order));
     },
   },
   methods: {
     changeLocale(locale) {
       this.$i18n.locale = locale;
       moment.locale(this.$i18n.locale);
-    }
+    },
   },
   created() {
     this.brand = sbaConfig.uiSettings.brand;
     this.userName = sbaConfig.user ? sbaConfig.user.name : null;
     this.availableLocales = getAvailableLocales();
-    this.csrfToken = readCookie('XSRF-TOKEN');
+    this.csrfToken = readCookie("XSRF-TOKEN");
     this.csrfParameterName = sbaConfig.csrf.parameterName;
   },
   mounted() {
-    document.documentElement.classList.add('has-navbar-fixed-top');
+    document.documentElement.classList.add("has-navbar-fixed-top");
   },
   beforeDestroy() {
-    document.documentElement.classList.remove('has-navbar-fixed-top')
-  }
-}
+    document.documentElement.classList.remove("has-navbar-fixed-top");
+  },
+};
 </script>
 
 <style lang="scss">

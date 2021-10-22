@@ -1,7 +1,5 @@
 {
-  "activeProfiles": [
-    "one"
-  ],
+  "activeProfiles": ["one"],
   "propertySources": [
     {
       "name": "server.ports",

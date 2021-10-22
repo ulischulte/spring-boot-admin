@@ -16,25 +16,34 @@
 
 <template>
   <div class="section startup-view">
-    <sba-alert v-if="error" :error="error" :title="$t('instances.startup.fetch_failed')" />
+    <sba-alert
+      v-if="error"
+      :error="error"
+      :title="$t('instances.startup.fetch_failed')"
+    />
 
-    <tree-table v-if="hasLoaded" :expand="expandedNodes" :tree="eventTree" @change="saveTreeState" />
+    <tree-table
+      v-if="hasLoaded"
+      :expand="expandedNodes"
+      :tree="eventTree"
+      @change="saveTreeState"
+    />
   </div>
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import {StartupActuatorService} from '@/services/startup-actuator';
-import {VIEW_GROUP} from '../../index';
-import TreeTable from '@/views/instances/startup/tree-table';
+import Instance from "@/services/instance";
+import { StartupActuatorService } from "@/services/startup-actuator";
+import { VIEW_GROUP } from "../../index";
+import TreeTable from "@/views/instances/startup/tree-table";
 
 export default {
-  components: {TreeTable},
+  components: { TreeTable },
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     error: null,
@@ -57,7 +66,7 @@ export default {
         const res = await this.instance.fetchStartup();
         this.eventTree = StartupActuatorService.parseAsTree(res.data);
       } catch (error) {
-        console.warn('Fetching startup failed:', error);
+        console.warn("Fetching startup failed:", error);
         this.error = error;
       }
     },
@@ -69,7 +78,9 @@ export default {
     },
     loadTreeState() {
       if (window.localStorage) {
-        let value = localStorage.getItem(`applications/${this.instance.registration.name}/startup`);
+        let value = localStorage.getItem(
+          `applications/${this.instance.registration.name}/startup`
+        );
         if (value) {
           let parse = JSON.parse(value);
           this.expandedNodes = new Set(parse.expandedNodes);
@@ -78,23 +89,26 @@ export default {
     },
     saveTreeState($event) {
       if (window.localStorage) {
-        localStorage.setItem(`applications/${this.instance.registration.name}/startup`, JSON.stringify({
-          expandedNodes: [...$event.expandedNodes]
-        }));
+        localStorage.setItem(
+          `applications/${this.instance.registration.name}/startup`,
+          JSON.stringify({
+            expandedNodes: [...$event.expandedNodes],
+          })
+        );
       }
-    }
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'instances/startup',
-      parent: 'instances',
-      path: 'startup',
+      name: "instances/startup",
+      parent: "instances",
+      path: "startup",
       component: this,
-      label: 'instances.startup.label',
+      label: "instances.startup.label",
       group: VIEW_GROUP.LOGGING,
       order: 600,
-      isEnabled: ({instance}) => instance.hasEndpoint('startup')
+      isEnabled: ({ instance }) => instance.hasEndpoint("startup"),
     });
-  }
-}
+  },
+};
 </script>

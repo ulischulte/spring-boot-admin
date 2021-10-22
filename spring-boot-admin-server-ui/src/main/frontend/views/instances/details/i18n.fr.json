@@ -3,7 +3,7 @@
     "details": {
       "label": "Détails",
       "fetch_failed": "Echec de la récupération des métriques.",
-      "cache":{
+      "cache": {
         "fetch_failed": "Echec de la récupération des métriques de cache.",
         "hit_ratio": "Hit ratio",
         "hits": "Hits",

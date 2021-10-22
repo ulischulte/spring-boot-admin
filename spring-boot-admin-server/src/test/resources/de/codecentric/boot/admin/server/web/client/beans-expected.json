@@ -27,9 +27,7 @@
         "configServicePropertySource": {
           "aliases": [],
           "bean": "configServicePropertySource",
-          "dependencies": [
-            "configClientProperties"
-          ],
+          "dependencies": ["configClientProperties"],
           "resource": "org.springframework.cloud.config.client.ConfigServiceBootstrapConfiguration",
           "scope": "singleton",
           "type": "org.springframework.cloud.config.client.ConfigServicePropertySourceLocator"
