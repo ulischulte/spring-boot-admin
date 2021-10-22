@@ -72,4 +72,4 @@ jobs:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           # or
           # api-token: ${{ secrets.CODACY_API_TOKEN }}
-          coverage-reports: cobertura.xml
+          coverage-reports: ./**/target/site/jacoco/jacoco.xml
