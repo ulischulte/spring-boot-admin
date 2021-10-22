@@ -60,3 +60,16 @@ jobs:
           key: java
           coverage-file: ./**/target/site/jacoco/jacoco.xml
           dsn: ${{ secrets.DEEPSOURCE_DSN }}
+
+  codacy-coverage-reporter:
+    runs-on: ubuntu-latest
+    name: codacy-coverage-reporter
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run codacy-coverage-reporter
+        uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          api-token: ${{ secrets.CODACY_API_TOKEN }}
+          # or
+          # api-token: ${{ secrets.CODACY_API_TOKEN }}
+          coverage-reports: cobertura.xml
