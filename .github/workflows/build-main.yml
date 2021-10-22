@@ -4,6 +4,30 @@ on:
   push:
 
 jobs:
+  codacy-security-scan:
+    name: Codacy Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+        with:
+          output: results.sarif
+          format: sarif
+          # Adjust severity of non-security issues
+          gh-code-scanning-compat: true
+          # Force 0 exit code to allow SARIF file generation
+          # This will handover control about PR rejection to the GitHub side
+          max-allowed-issues: 2147483647
+
+      # Upload the SARIF file generated in the previous step
+      - name: Upload SARIF results file
+        uses: github/codeql-action/upload-sarif@main
+        with:
+          sarif_file: results.sarif
+
   build:
     strategy:
       matrix:
@@ -48,6 +72,12 @@ jobs:
         run: |
           mvn -B spring-javaformat:apply --no-transfer-progress
           mvn -B verify -P coverage --no-transfer-progress -D maven.javadoc.skip=true
+      - name: Report test coverage to DeepSource
+        uses: deepsourcelabs/test-coverage-action@master
+        with:
+          key: java
+          coverage-file: ./**/target/site/jacoco/jacoco.xml
+          dsn: ${{ secrets.DEEPSOURCE_DSN }}
 
       - uses: codecov/codecov-action@v1
         with:
@@ -58,11 +88,3 @@ jobs:
         with:
           api-token: ${{ secrets.CODACY_API_TOKEN }}
           coverage-reports: ./**/target/site/jacoco/jacoco.xml
-
-      - name: Report test coverage to DeepSource
-        uses: deepsourcelabs/test-coverage-action@master
-        with:
-          key: java
-          coverage-file: ./**/target/site/jacoco/jacoco.xml
-          dsn: ${{ secrets.DEEPSOURCE_DSN }}
-
