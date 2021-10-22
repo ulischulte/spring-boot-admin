@@ -56,6 +56,10 @@ public class HazelcastEventStore extends ConcurrentMapEventStore {
 		}, true);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	public HazelcastEventStore clone() {
 		return new HazelcastEventStore(null);
