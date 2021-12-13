@@ -15,7 +15,12 @@
   -->
 
 <template>
-  <button @click="click" class="confirm-button" :class="{ 'is-warning' : confirm }" v-on-clickaway="abort">
+  <button
+    @click="click"
+    class="confirm-button"
+    :class="{ 'is-warning': confirm }"
+    v-on-clickaway="abort"
+  >
     <slot name="confirm" v-if="confirm">
       <span v-text="$t('term.confirm')" />
     </slot>
@@ -24,37 +29,36 @@
 </template>
 
 <script>
-  import {directive as onClickaway} from 'vue-clickaway2';
+import { directive as onClickaway } from "vue-clickaway2";
 
-  export default {
-    directives: {onClickaway},
-    data: () => ({
-      confirm: false
-    }),
-    methods: {
-      abort() {
-        this.confirm = false;
-      },
-      click(event) {
-        if (this.confirm) {
-          this.$el.style.width = null;
-          this.$emit('click', event);
-        } else {
-          const width = this.$el.getBoundingClientRect().width;
-          this.$el.style.width = `${width}px`;
-          event.stopPropagation();
-        }
-        this.confirm = !this.confirm;
+export default {
+  directives: { onClickaway },
+  data: () => ({
+    confirm: false,
+  }),
+  methods: {
+    abort() {
+      this.confirm = false;
+    },
+    click(event) {
+      if (this.confirm) {
+        this.$el.style.width = null;
+        this.$emit("click", event);
+      } else {
+        const width = this.$el.getBoundingClientRect().width;
+        this.$el.style.width = `${width}px`;
+        event.stopPropagation();
       }
-    }
-  }
+      this.confirm = !this.confirm;
+    },
+  },
+};
 </script>
 
-
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .confirm-button {
-    transition: all $easing 150ms;
-  }
+.confirm-button {
+  transition: all $easing 150ms;
+}
 </style>

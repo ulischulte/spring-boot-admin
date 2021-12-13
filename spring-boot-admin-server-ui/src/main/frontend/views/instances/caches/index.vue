@@ -16,10 +16,7 @@
 
 <template>
   <section class="section">
-    <div
-      v-if="error"
-      class="message is-danger"
-    >
+    <div v-if="error" class="message is-danger">
       <div class="message-body">
         <strong>
           <font-awesome-icon
@@ -34,11 +31,7 @@
     <div class="field-body">
       <div class="field has-addons has-icons-left">
         <p class="control is-expanded has-icons-left">
-          <input
-            class="input"
-            type="search"
-            v-model="filter"
-          >
+          <input class="input" type="search" v-model="filter" />
           <span class="icon is-small is-left">
             <font-awesome-icon icon="filter" />
           </span>
@@ -52,92 +45,102 @@
         </p>
       </div>
     </div>
-    <caches-list :instance="instance" :caches="filteredCaches" :is-loading="isLoading" :application="application" />
+    <caches-list
+      :instance="instance"
+      :caches="filteredCaches"
+      :is-loading="isLoading"
+      :application="application"
+    />
   </section>
 </template>
 
 <script>
-  import Instance from '@/services/instance';
-  import CachesList from '@/views/instances/caches/caches-list';
-  import flatMap from 'lodash/flatMap';
-  import isEmpty from 'lodash/isEmpty';
-  import {VIEW_GROUP} from '../../index';
-  import Application from '@/services/application';
+import Instance from "@/services/instance";
+import CachesList from "@/views/instances/caches/caches-list";
+import flatMap from "lodash/flatMap";
+import isEmpty from "lodash/isEmpty";
+import { VIEW_GROUP } from "../../index";
+import Application from "@/services/application";
 
-  const flattenCaches = cacheData => {
-    if (isEmpty(cacheData.cacheManagers)) {
-      return [];
-    }
-    const mappend = flatMap(Object.entries(cacheData.cacheManagers),
-      ([cacheManagerName, v]) => Object.keys(v.caches)
-        .map(cacheName => ({cacheManager: cacheManagerName, name: cacheName, key: `${cacheManagerName}:${cacheName}`}))
-    );
-    return mappend.sort((c1, c2) => c1.key.localeCompare(c2.key));
-  };
-
-  export default {
-    components: {CachesList},
-    props: {
-      instance: {
-        type: Instance,
-        required: true
-      },
-      application: {
-        type: Application,
-        required: true
-      }
-    },
-    data: () => ({
-      isLoading: false,
-      error: null,
-      caches: [],
-      filter: '',
-    }),
-    computed: {
-      filteredCaches() {
-        let filterFn = this.getFilterFn();
-        return filterFn ? this.caches.filter(filterFn) : this.caches;
-      }
-    },
-    methods: {
-      async fetchCaches() {
-        this.error = null;
-        this.isLoading = true;
-        try {
-          const res = await this.instance.fetchCaches();
-          this.caches = flattenCaches(res.data);
-        } catch (error) {
-          console.warn('Fetching caches failed:', error);
-          this.error = error;
-        }
-        this.isLoading = false;
-      },
-      getFilterFn() {
-        let filterFn = null;
-
-        if (this.filter) {
-          const normalizedFilter = this.filter.toLowerCase();
-          filterFn = cache => cache.name.toLowerCase().includes(normalizedFilter);
-        }
-
-        return filterFn;
-      }
-    },
-    created() {
-      this.fetchCaches();
-    },
-    install({viewRegistry}) {
-      viewRegistry.addView({
-        name: 'instances/caches',
-        parent: 'instances',
-        path: 'caches',
-        label: 'instances.caches.label',
-        group: VIEW_GROUP.DATA,
-        component: this,
-        order: 970,
-        isEnabled: ({instance}) => instance.hasEndpoint('caches')
-      });
-    }
+const flattenCaches = (cacheData) => {
+  if (isEmpty(cacheData.cacheManagers)) {
+    return [];
   }
-</script>
+  const mappend = flatMap(
+    Object.entries(cacheData.cacheManagers),
+    ([cacheManagerName, v]) =>
+      Object.keys(v.caches).map((cacheName) => ({
+        cacheManager: cacheManagerName,
+        name: cacheName,
+        key: `${cacheManagerName}:${cacheName}`,
+      }))
+  );
+  return mappend.sort((c1, c2) => c1.key.localeCompare(c2.key));
+};
 
+export default {
+  components: { CachesList },
+  props: {
+    instance: {
+      type: Instance,
+      required: true,
+    },
+    application: {
+      type: Application,
+      required: true,
+    },
+  },
+  data: () => ({
+    isLoading: false,
+    error: null,
+    caches: [],
+    filter: "",
+  }),
+  computed: {
+    filteredCaches() {
+      let filterFn = this.getFilterFn();
+      return filterFn ? this.caches.filter(filterFn) : this.caches;
+    },
+  },
+  methods: {
+    async fetchCaches() {
+      this.error = null;
+      this.isLoading = true;
+      try {
+        const res = await this.instance.fetchCaches();
+        this.caches = flattenCaches(res.data);
+      } catch (error) {
+        console.warn("Fetching caches failed:", error);
+        this.error = error;
+      }
+      this.isLoading = false;
+    },
+    getFilterFn() {
+      let filterFn = null;
+
+      if (this.filter) {
+        const normalizedFilter = this.filter.toLowerCase();
+        filterFn = (cache) =>
+          cache.name.toLowerCase().includes(normalizedFilter);
+      }
+
+      return filterFn;
+    },
+  },
+  created() {
+    this.fetchCaches();
+  },
+  install({ viewRegistry }) {
+    viewRegistry.addView({
+      name: "instances/caches",
+      parent: "instances",
+      path: "caches",
+      label: "instances.caches.label",
+      group: VIEW_GROUP.DATA,
+      component: this,
+      order: 970,
+      isEnabled: ({ instance }) => instance.hasEndpoint("caches"),
+    });
+  },
+};
+</script>

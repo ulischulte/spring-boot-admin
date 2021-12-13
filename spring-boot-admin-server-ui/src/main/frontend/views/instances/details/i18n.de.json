@@ -3,7 +3,7 @@
     "details": {
       "label": "Details",
       "fetch_failed": "Das Laden der Metriken ist fehlgeschlagen.",
-      "cache":{
+      "cache": {
         "fetch_failed": "Das Laden der Cache-Metriken ist fehlgeschlagen.",
         "hit_ratio": "Treffer-Rate",
         "hits": "Treffer",

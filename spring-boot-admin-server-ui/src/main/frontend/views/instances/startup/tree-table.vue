@@ -18,16 +18,23 @@
   <div class="tree">
     <div class="row row--head">
       <div class="column column--name">
-        <input class="checkbox-expand-all"
-               type="checkbox"
-               @change="expandTree"
-               v-model="isExpanded"
-               :title="$t('instances.startup.expand_all')"
-        >
+        <input
+          class="checkbox-expand-all"
+          type="checkbox"
+          @change="expandTree"
+          v-model="isExpanded"
+          :title="$t('instances.startup.expand_all')"
+        />
         <span v-text="$t('instances.startup.column.name')" />
       </div>
-      <div class="column column--duration text-right" v-text="$t('instances.startup.column.duration')" />
-      <div class="column column--details" v-text="$t('instances.startup.column.details')" />
+      <div
+        class="column column--duration text-right"
+        v-text="$t('instances.startup.column.duration')"
+      />
+      <div
+        class="column column--details"
+        v-text="$t('instances.startup.column.details')"
+      />
     </div>
     <ul v-if="tree">
       <tree-item
@@ -42,25 +49,25 @@
 </template>
 
 <script>
-import TreeItem from '@/views/instances/startup/tree-item';
-import {StartupActuatorEventTree} from '@/services/startup-activator-tree';
+import TreeItem from "@/views/instances/startup/tree-item";
+import { StartupActuatorEventTree } from "@/services/startup-activator-tree";
 
 export default {
-  components: {TreeItem},
+  components: { TreeItem },
   props: {
     tree: {
       type: StartupActuatorEventTree,
-      required: true
+      required: true,
     },
     expand: {
       type: Set,
       required: false,
-      default: null
-    }
+      default: null,
+    },
   },
   data: () => ({
     expandedNodes: new Set(),
-    isExpanded: false
+    isExpanded: false,
   }),
   created() {
     if (this.expand) {
@@ -69,37 +76,39 @@ export default {
   },
   computed: {
     treeSize() {
-      return new Set(this.tree.getEvents()).size
-    }
+      return new Set(this.tree.getEvents()).size;
+    },
   },
   watch: {
     expandedNodes() {
-      this.$emit('change', {
-        expandedNodes: this.expandedNodes
+      this.$emit("change", {
+        expandedNodes: this.expandedNodes,
       });
-    }
+    },
   },
   methods: {
     expandTree() {
       if (this.isExpanded) {
-        this.expandedNodes = new Set(this.tree.getEvents().map(e => e.startupStep.id));
+        this.expandedNodes = new Set(
+          this.tree.getEvents().map((e) => e.startupStep.id)
+        );
       } else {
         this.expandedNodes = new Set();
       }
     },
     onToggle($event) {
       if ($event.isOpen === true) {
-        this.expandedNodes.add($event.target.startupStep.id)
-        this.expandedNodes = new Set(this.expandedNodes)
+        this.expandedNodes.add($event.target.startupStep.id);
+        this.expandedNodes = new Set(this.expandedNodes);
       } else {
-        this.expandedNodes.delete($event.target.startupStep.id)
-        this.expandedNodes = new Set(this.expandedNodes)
+        this.expandedNodes.delete($event.target.startupStep.id);
+        this.expandedNodes = new Set(this.expandedNodes);
       }
 
-      this.isExpanded = this.expandedNodes.size === this.treeSize
-    }
-  }
-}
+      this.isExpanded = this.expandedNodes.size === this.treeSize;
+    },
+  },
+};
 </script>
 
 <style lang="scss">
@@ -176,7 +185,7 @@ export default {
     margin-right: 10px;
 
     border-top: $iconSize solid transparent;
-    border-left: $iconSize*1.2 solid #555;
+    border-left: $iconSize * 1.2 solid #555;
     border-bottom: $iconSize solid transparent;
 
     &--open {
@@ -188,10 +197,10 @@ export default {
     }
   }
 
-  $colors: #FFFFFF, #4CB4D4, #d4577b, #42d3a5, #D4802C, #37D449;
+  $colors: #ffffff, #4cb4d4, #d4577b, #42d3a5, #d4802c, #37d449;
   @for $i from 1 through 5 {
-    &[tree-item-depth='#{$i}'] {
-      background-color: rgba(#42D3A5, 0.2);
+    &[tree-item-depth="#{$i}"] {
+      background-color: rgba(#42d3a5, 0.2);
 
       .column--name {
         padding-left: 22px * $i;

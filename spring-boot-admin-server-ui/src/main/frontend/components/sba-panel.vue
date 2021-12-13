@@ -19,7 +19,7 @@
     <header
       v-if="title"
       class="card-header"
-      :class="{'panel__header--sticky': headerSticksBelow}"
+      :class="{ 'panel__header--sticky': headerSticksBelow }"
       v-sticks-below="headerSticksBelow"
     >
       <p class="card-header-title">
@@ -39,53 +39,53 @@
 </template>
 
 <script>
-  import sticksBelow from '@/directives/sticks-below';
-  import SbaIconButton from './sba-icon-button';
+import sticksBelow from "@/directives/sticks-below";
+import SbaIconButton from "./sba-icon-button";
 
-  export default {
-    components: {SbaIconButton},
-    directives: {sticksBelow},
-    props: {
-      title: {
-        type: String,
-        required: true
-      },
-      closeable: {
-        type: Boolean,
-        default: false
-      },
-      headerSticksBelow: {
-        type: Array,
-        default: undefined
-      }
+export default {
+  components: { SbaIconButton },
+  directives: { sticksBelow },
+  props: {
+    title: {
+      type: String,
+      required: true,
     },
-    methods: {
-      close(event) {
-        this.$emit('close', event);
-      }
-    }
-  }
+    closeable: {
+      type: Boolean,
+      default: false,
+    },
+    headerSticksBelow: {
+      type: Array,
+      default: undefined,
+    },
+  },
+  methods: {
+    close(event) {
+      this.$emit("close", event);
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .panel {
-    margin-bottom: 1.5rem;
-    overflow: initial;
+.panel {
+  margin-bottom: 1.5rem;
+  overflow: initial;
 
-    &__close {
-      margin-right: 0.75em;
-      color: $grey-light;
-      display: flex;
-      align-items: center;
-      justify-self: flex-end;
-    }
-
-    &__header--sticky {
-      position: sticky;
-      background-color: $white;
-      z-index: 10;
-    }
+  &__close {
+    margin-right: 0.75em;
+    color: $grey-light;
+    display: flex;
+    align-items: center;
+    justify-self: flex-end;
   }
+
+  &__header--sticky {
+    position: sticky;
+    background-color: $white;
+    z-index: 10;
+  }
+}
 </style>

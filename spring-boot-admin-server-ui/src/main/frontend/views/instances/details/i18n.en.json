@@ -3,7 +3,7 @@
     "details": {
       "label": "Details",
       "fetch_failed": "Fetching metrics failed.",
-      "cache":{
+      "cache": {
         "fetch_failed": "Fetching cache metrics failed.",
         "hit_ratio": "Hit ratio",
         "hits": "Hits",

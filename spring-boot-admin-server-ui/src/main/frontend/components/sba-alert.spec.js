@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-import sbaAlert from '@/components/sba-alert';
-import {render, screen} from '@testing-library/vue';
+import sbaAlert from "@/components/sba-alert";
+import { render, screen } from "@testing-library/vue";
 
-describe('sba-alert', () => {
-  it('should render error message', () => {
+describe("sba-alert", () => {
+  it("should render error message", () => {
     const props = {
-      error: new Error('i am a error message'),
-      title: 'This is a caption',
-    }
+      error: new Error("i am a error message"),
+      title: "This is a caption",
+    };
     render(sbaAlert, {
       props,
       stubs: {
-        'font-awesome-icon': true
-      }
+        "font-awesome-icon": true,
+      },
     });
 
-    expect(screen.getByText('i am a error message')).toBeDefined();
-    expect(screen.getByText('This is a caption')).toBeDefined();
+    expect(screen.getByText("i am a error message")).toBeDefined();
+    expect(screen.getByText("This is a caption")).toBeDefined();
   });
 
-  it('should render nothing', () => {
+  it("should render nothing", () => {
     const props = {
-      title: 'This is a caption',
-    }
+      title: "This is a caption",
+    };
     render(sbaAlert, {
       props,
       stubs: {
-        'font-awesome-icon': true
-      }
+        "font-awesome-icon": true,
+      },
     });
 
-    expect(screen.queryByText('This is a caption')).not.toBeInTheDocument();
+    expect(screen.queryByText("This is a caption")).not.toBeInTheDocument();
   });
-})
+});

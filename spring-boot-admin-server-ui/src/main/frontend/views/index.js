@@ -16,22 +16,22 @@
 
 const views = [];
 
-const context = require.context('.', true, /^\.\/.+\/index\.(js|vue)$/);
+const context = require.context(".", true, /^\.\/.+\/index\.(js|vue)$/);
 context.keys().forEach(function (key) {
   const defaultExport = context(key).default;
   if (defaultExport && defaultExport.install) {
-    views.push(defaultExport)
+    views.push(defaultExport);
   }
 });
 
 export const VIEW_GROUP = {
-  WEB: 'web',
-  INSIGHTS: 'insights',
-  DATA: 'data',
-  JVM: 'jvm',
-  LOGGING: 'logging',
-  NONE: 'none',
-  SECURITY: 'security'
+  WEB: "web",
+  INSIGHTS: "insights",
+  DATA: "data",
+  JVM: "jvm",
+  LOGGING: "logging",
+  NONE: "none",
+  SECURITY: "security",
 };
 
 export default views;

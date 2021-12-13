@@ -16,20 +16,23 @@
   -->
 
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-</head>
-<th:block th:remove="all">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <th:block th:remove="all">
     <!-- this section is excluded from mail body -->
     <th:block th:fragment="subject">
-        [[${instance.registration.name}]] ([[(${instance.id})]]) is [[${event.statusInfo.status}]]
+      [[${instance.registration.name}]] ([[(${instance.id})]]) is
+      [[${event.statusInfo.status}]]
     </th:block>
-</th:block>
-<body>
-<h1 th:text="${customProperty}"></h1>
-<span th:text="${instance.registration.name}"/> (<span th:text="${instance.id}"/>)
-status changed from <span th:text="${lastStatus}"/> to <span th:text="${event.statusInfo.status}"/>
-<br/>
-<span th:text="${instance.registration.healthUrl}"/>
-</body>
+  </th:block>
+  <body>
+    <h1 th:text="${customProperty}"></h1>
+    <span th:text="${instance.registration.name}" /> (<span
+      th:text="${instance.id}"
+    />) status changed from <span th:text="${lastStatus}" /> to
+    <span th:text="${event.statusInfo.status}" />
+    <br />
+    <span th:text="${instance.registration.healthUrl}" />
+  </body>
 </html>

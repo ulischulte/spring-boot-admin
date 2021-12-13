@@ -25,7 +25,7 @@
               type="search"
               :placeholder="$t('instances.auditevents.principal')"
               v-model.trim="filter.principal"
-            >
+            />
           </p>
         </div>
         <div class="field">
@@ -36,7 +36,7 @@
               type="search"
               :placeholder="$t('instances.auditevents.type')"
               v-model="filter.type"
-            >
+            />
             <datalist id="auditevent-type">
               <option value="AUTHENTICATION_FAILURE" />
               <option value="AUTHENTICATION_SUCCESS" />
@@ -53,7 +53,7 @@
               placeholder="Date"
               :value="formatDate(filter.after)"
               @input="filter.after = parseDate($event.target.value)"
-            >
+            />
           </p>
         </div>
       </div>
@@ -71,11 +71,13 @@
           <p v-text="error.message" />
         </div>
       </div>
-      <div
-        v-if="isOldAuditevents"
-        class="message is-warning"
-      >
-        <div class="message-body" v-html="$t('instances.auditevents.audit_log_not_supported_spring_boot_1')" />
+      <div v-if="isOldAuditevents" class="message is-warning">
+        <div
+          class="message-body"
+          v-html="
+            $t('instances.auditevents.audit_log_not_supported_spring_boot_1')
+          "
+        />
       </div>
       <auditevents-list
         :instance="instance"
@@ -87,127 +89,150 @@
 </template>
 
 <script>
-  import subscribing from '@/mixins/subscribing';
-  import Instance from '@/services/instance';
-  import {concatMap, debounceTime, merge, Subject, tap, timer} from '@/utils/rxjs';
-  import AuditeventsList from '@/views/instances/auditevents/auditevents-list';
-  import uniqBy from 'lodash/uniqBy';
-  import moment from 'moment';
-  import {VIEW_GROUP} from '../../index';
+import subscribing from "@/mixins/subscribing";
+import Instance from "@/services/instance";
+import {
+  concatMap,
+  debounceTime,
+  merge,
+  Subject,
+  tap,
+  timer,
+} from "@/utils/rxjs";
+import AuditeventsList from "@/views/instances/auditevents/auditevents-list";
+import uniqBy from "lodash/uniqBy";
+import moment from "moment";
+import { VIEW_GROUP } from "../../index";
 
-  class Auditevent {
-    constructor({timestamp, ...event}) {
-      Object.assign(this, event);
-      this.timestamp = moment(timestamp);
-    }
-
-    get key() {
-      return `${this.timestamp}-${this.type}-${this.principal}`;
-    }
-
-    get remoteAddress() {
-      return this.data && this.data.details && this.data.details.remoteAddress || null;
-    }
-
-    get sessionId() {
-      return this.data && this.data.details && this.data.details.sessionId || null;
-    }
-
-    isSuccess() {
-      return this.type.toLowerCase().includes('success');
-    }
-
-    isFailure() {
-      return this.type.toLowerCase().includes('failure');
-    }
+class Auditevent {
+  constructor({ timestamp, ...event }) {
+    Object.assign(this, event);
+    this.timestamp = moment(timestamp);
   }
 
-  export default {
-    props: {
-      instance: {
-        type: Instance,
-        required: true
-      }
+  get key() {
+    return `${this.timestamp}-${this.type}-${this.principal}`;
+  }
+
+  get remoteAddress() {
+    return (
+      (this.data && this.data.details && this.data.details.remoteAddress) ||
+      null
+    );
+  }
+
+  get sessionId() {
+    return (
+      (this.data && this.data.details && this.data.details.sessionId) || null
+    );
+  }
+
+  isSuccess() {
+    return this.type.toLowerCase().includes("success");
+  }
+
+  isFailure() {
+    return this.type.toLowerCase().includes("failure");
+  }
+}
+
+export default {
+  props: {
+    instance: {
+      type: Instance,
+      required: true,
     },
-    mixins: [subscribing],
-    components: {AuditeventsList},
-    data: () => ({
-      isLoading: false,
-      error: null,
-      events: [],
-      filter: {
-        after: moment().startOf('day'),
-        type: null,
-        principal: null
-      },
-      isOldAuditevents: false
-    }),
-    watch: {
-      filter: {
-        deep: true,
-        handler() {
-          this.filterChanged.next();
-        }
-      }
+  },
+  mixins: [subscribing],
+  components: { AuditeventsList },
+  data: () => ({
+    isLoading: false,
+    error: null,
+    events: [],
+    filter: {
+      after: moment().startOf("day"),
+      type: null,
+      principal: null,
     },
-    methods: {
-      formatDate(value) {
-        return value.format(moment.HTML5_FMT.DATETIME_LOCAL);
+    isOldAuditevents: false,
+  }),
+  watch: {
+    filter: {
+      deep: true,
+      handler() {
+        this.filterChanged.next();
       },
-      parseDate(value) {
-        return moment(value, moment.HTML5_FMT.DATETIME_LOCAL, true);
-      },
-      async fetchAuditevents() {
-        this.isLoading = true;
-        const response = await this.instance.fetchAuditevents(this.filter);
-        const converted = response.data.events.map(event => new Auditevent(event));
-        converted.reverse();
-        this.isLoading = false;
-        return converted;
-      },
-      createSubscription() {
-        const vm = this;
-        vm.filterChanged = new Subject();
-        vm.error = null;
-        return timer(0, 5000)
-          .pipe(
-            merge(vm.filterChanged.pipe(
+    },
+  },
+  methods: {
+    formatDate(value) {
+      return value.format(moment.HTML5_FMT.DATETIME_LOCAL);
+    },
+    parseDate(value) {
+      return moment(value, moment.HTML5_FMT.DATETIME_LOCAL, true);
+    },
+    async fetchAuditevents() {
+      this.isLoading = true;
+      const response = await this.instance.fetchAuditevents(this.filter);
+      const converted = response.data.events.map(
+        (event) => new Auditevent(event)
+      );
+      converted.reverse();
+      this.isLoading = false;
+      return converted;
+    },
+    createSubscription() {
+      const vm = this;
+      vm.filterChanged = new Subject();
+      vm.error = null;
+      return timer(0, 5000)
+        .pipe(
+          merge(
+            vm.filterChanged.pipe(
               debounceTime(250),
               tap({
-                next: () => vm.events = []
+                next: () => (vm.events = []),
               })
-            )),
-            concatMap(this.fetchAuditevents)
-          )
-          .subscribe({
-            next: events => {
-              vm.addEvents(events);
-            },
-            error: error => {
-              console.warn('Fetching audit events failed:', error);
-              if (error.response.headers['content-type'].includes('application/vnd.spring-boot.actuator.v2')) {
-                vm.error = error;
-              } else {
-                vm.isOldAuditevents = true;
-              }
+            )
+          ),
+          concatMap(this.fetchAuditevents)
+        )
+        .subscribe({
+          next: (events) => {
+            vm.addEvents(events);
+          },
+          error: (error) => {
+            console.warn("Fetching audit events failed:", error);
+            if (
+              error.response.headers["content-type"].includes(
+                "application/vnd.spring-boot.actuator.v2"
+              )
+            ) {
+              vm.error = error;
+            } else {
+              vm.isOldAuditevents = true;
             }
-          });
-      },
-      addEvents(events) {
-        this.events = uniqBy(this.events ? events.concat(this.events) : events, event => event.key);
-      }
+          },
+        });
     },
-    install({viewRegistry}) {
-      viewRegistry.addView({
-        name: 'instances/auditevents',
-        parent: 'instances',
-        path: 'auditevents',
-        component: this,
-        label: 'instances.auditevents.label',
-        group: VIEW_GROUP.SECURITY,
-        order: 600,
-        isEnabled: ({instance}) => instance.hasEndpoint('auditevents')
-      });
-    }
-  }
+    addEvents(events) {
+      this.events = uniqBy(
+        this.events ? events.concat(this.events) : events,
+        (event) => event.key
+      );
+    },
+  },
+  install({ viewRegistry }) {
+    viewRegistry.addView({
+      name: "instances/auditevents",
+      parent: "instances",
+      path: "auditevents",
+      component: this,
+      label: "instances.auditevents.label",
+      group: VIEW_GROUP.SECURITY,
+      order: 600,
+      isEnabled: ({ instance }) => instance.hasEndpoint("auditevents"),
+    });
+  },
+};
 </script>

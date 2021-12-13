@@ -17,7 +17,11 @@
 <template>
   <sba-panel v-if="hasLoaded" :title="$t('instances.details.gc.title')">
     <div>
-      <sba-alert v-if="error" :error="error" :title="$t('instances.details.gc.fetch_failed')" />
+      <sba-alert
+        v-if="error"
+        :error="error"
+        :title="$t('instances.details.gc.fetch_failed')"
+      />
 
       <div v-if="current" class="level">
         <div class="level-item has-text-centered">
@@ -28,13 +32,19 @@
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading" v-text="$t('instances.details.gc.time_spent_total')" />
+            <p
+              class="heading"
+              v-text="$t('instances.details.gc.time_spent_total')"
+            />
             <p v-text="`${current.total_time.asSeconds().toFixed(4)}s`" />
           </div>
         </div>
         <div class="level-item has-text-centered">
           <div>
-            <p class="heading" v-text="$t('instances.details.gc.time_spent_max')" />
+            <p
+              class="heading"
+              v-text="$t('instances.details.gc.time_spent_max')"
+            />
             <p v-text="`${current.max.asSeconds().toFixed(4)}s`" />
           </div>
         </div>
@@ -44,20 +54,20 @@
 </template>
 
 <script>
-import sbaConfig from '@/sba-config';
-import subscribing from '@/mixins/subscribing';
-import Instance from '@/services/instance';
-import {concatMap, delay, retryWhen, timer} from '@/utils/rxjs';
-import moment from 'moment';
-import {toMillis} from '../metrics/metric';
-import {take} from 'rxjs/operators';
+import sbaConfig from "@/sba-config";
+import subscribing from "@/mixins/subscribing";
+import Instance from "@/services/instance";
+import { concatMap, delay, retryWhen, timer } from "@/utils/rxjs";
+import moment from "moment";
+import { toMillis } from "../metrics/metric";
+import { take } from "rxjs/operators";
 
 export default {
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
   mixins: [subscribing],
   data: () => ({
@@ -67,42 +77,43 @@ export default {
   }),
   methods: {
     async fetchMetrics() {
-      const response = await this.instance.fetchMetric('jvm.gc.pause');
+      const response = await this.instance.fetchMetric("jvm.gc.pause");
       const measurements = response.data.measurements.reduce(
         (current, measurement) => ({
           ...current,
-          [measurement.statistic.toLowerCase()]: measurement.value
+          [measurement.statistic.toLowerCase()]: measurement.value,
         }),
         {}
       );
       return {
         ...measurements,
-        total_time: moment.duration(toMillis(measurements.total_time, response.baseUnit)),
+        total_time: moment.duration(
+          toMillis(measurements.total_time, response.baseUnit)
+        ),
         max: moment.duration(toMillis(measurements.max, response.baseUnit)),
       };
     },
     createSubscription() {
       const vm = this;
       return timer(0, sbaConfig.uiSettings.pollTimer.gc)
-        .pipe(concatMap(this.fetchMetrics), retryWhen(
-          err => {
-            return err.pipe(
-              delay(1000),
-              take(5)
-            )
-          }))
+        .pipe(
+          concatMap(this.fetchMetrics),
+          retryWhen((err) => {
+            return err.pipe(delay(1000), take(5));
+          })
+        )
         .subscribe({
-          next: data => {
+          next: (data) => {
             vm.hasLoaded = true;
             vm.current = data;
           },
-          error: error => {
+          error: (error) => {
             vm.hasLoaded = true;
-            console.warn('Fetching GC metrics failed:', error);
+            console.warn("Fetching GC metrics failed:", error);
             vm.error = error;
-          }
+          },
         });
-    }
-  }
-}
+    },
+  },
+};
 </script>

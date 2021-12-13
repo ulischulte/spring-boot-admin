@@ -16,25 +16,48 @@
 
 <template>
   <section class="section">
-    <sba-alert v-if="error" :error="error" :title="$t('instances.metrics.fetch_failed')" />
+    <sba-alert
+      v-if="error"
+      :error="error"
+      :title="$t('instances.metrics.fetch_failed')"
+    />
     <div v-if="isOldMetrics" class="message is-warning">
-      <div class="message-body" v-text="$t('instances.metrics.metrics_not_supported_spring_boot_1')" />
+      <div
+        class="message-body"
+        v-text="$t('instances.metrics.metrics_not_supported_spring_boot_1')"
+      />
     </div>
-    <form v-else-if="availableMetrics.length > 0" class="field" @submit.prevent="handleSubmit">
+    <form
+      v-else-if="availableMetrics.length > 0"
+      class="field"
+      @submit.prevent="handleSubmit"
+    >
       <div class="field">
         <div class="control">
           <div class="select">
             <select v-model="selectedMetric">
-              <option v-for="metric in availableMetrics" :key="metric" v-text="metric" />
+              <option
+                v-for="metric in availableMetrics"
+                :key="metric"
+                v-text="metric"
+              />
             </select>
           </div>
         </div>
       </div>
       <div>
-        <p v-if="stateFetchingTags === 'executing'" class="is-loading" v-text="$t('instances.metrics.fetching_tags')" />
+        <p
+          v-if="stateFetchingTags === 'executing'"
+          class="is-loading"
+          v-text="$t('instances.metrics.fetching_tags')"
+        />
 
         <div v-if="availableTags" class="box">
-          <div v-for="tag in availableTags" :key="tag.tag" class="field is-horizontal">
+          <div
+            v-for="tag in availableTags"
+            :key="tag.tag"
+            class="field is-horizontal"
+          >
             <div class="field-label">
               <label class="label" v-text="tag.tag" />
             </div>
@@ -42,50 +65,61 @@
               <div class="control">
                 <div class="select">
                   <select v-model="selectedTags[tag.tag]">
-                    <option :value="undefined">
-                      -
-                    </option>
-                    <option v-for="value in tag.values" :key="value" :value="value" v-text="value" />
+                    <option :value="undefined">-</option>
+                    <option
+                      v-for="value in tag.values"
+                      :key="value"
+                      :value="value"
+                      v-text="value"
+                    />
                   </select>
                 </div>
               </div>
             </div>
           </div>
-          <p v-if="availableTags && availableTags.length === 0" v-text="$t('instances.metrics.no_tags_available')" />
+          <p
+            v-if="availableTags && availableTags.length === 0"
+            v-text="$t('instances.metrics.no_tags_available')"
+          />
           <div class="field is-grouped is-grouped-right">
             <div class="control">
-              <button class="button is-primary" type="submit" v-text="$t('instances.metrics.add_metric')" />
+              <button
+                class="button is-primary"
+                type="submit"
+                v-text="$t('instances.metrics.add_metric')"
+              />
             </div>
           </div>
         </div>
       </div>
     </form>
 
-    <metric v-for="metric in metrics"
-            :key="metric.name"
-            :instance="instance"
-            :metric-name="metric.name"
-            :statistic-types="metric.types"
-            :tag-selections="metric.tagSelections"
-            @remove="removeMetric"
-            @type-select="handleTypeSelect"
+    <metric
+      v-for="metric in metrics"
+      :key="metric.name"
+      :instance="instance"
+      :metric-name="metric.name"
+      :statistic-types="metric.types"
+      :tag-selections="metric.tagSelections"
+      @remove="removeMetric"
+      @type-select="handleTypeSelect"
     />
   </section>
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import sortBy from 'lodash/sortBy';
-import Metric from './metric';
-import {VIEW_GROUP} from '../../index';
+import Instance from "@/services/instance";
+import sortBy from "lodash/sortBy";
+import Metric from "./metric";
+import { VIEW_GROUP } from "../../index";
 
 export default {
-  components: {Metric},
+  components: { Metric },
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     metrics: [],
@@ -95,60 +129,68 @@ export default {
     stateFetchingTags: null,
     availableTags: null,
     selectedTags: null,
-    isOldMetrics: false
+    isOldMetrics: false,
   }),
   created() {
     this.fetchMetricIndex();
     this.metrics = this.loadMetrics();
   },
   watch: {
-    selectedMetric: 'fetchAvailableTags',
+    selectedMetric: "fetchAvailableTags",
     metrics: {
       deep: true,
       handler(value) {
         this.persistMetrics(value);
-      }
-    }
+      },
+    },
   },
   methods: {
     handleSubmit() {
-      this.addMetric(this.selectedMetric, this.selectedTags)
+      this.addMetric(this.selectedMetric, this.selectedTags);
     },
     handleTypeSelect(metricName, statistic, type) {
-      const metric = this.metrics.find(m => m.name === metricName);
+      const metric = this.metrics.find((m) => m.name === metricName);
       if (metric) {
-        metric.types = {...metric.types, [statistic]: type}
+        metric.types = { ...metric.types, [statistic]: type };
       }
     },
     removeMetric(metricName, idxTagSelection) {
-      const idxMetric = this.metrics.findIndex(m => m.name === metricName);
+      const idxMetric = this.metrics.findIndex((m) => m.name === metricName);
       if (idxMetric >= 0) {
         const metric = this.metrics[idxMetric];
         if (idxTagSelection < metric.tagSelections.length) {
           metric.tagSelections.splice(idxTagSelection, 1);
         }
         if (metric.tagSelections.length === 0) {
-          this.metrics.splice(idxMetric, 1)
+          this.metrics.splice(idxMetric, 1);
         }
       }
     },
     addMetric(metricName, tagSelection = {}) {
       if (metricName) {
-        const metric = this.metrics.find(m => m.name === metricName);
+        const metric = this.metrics.find((m) => m.name === metricName);
         if (metric) {
-          metric.tagSelections = [...metric.tagSelections, {...tagSelection}]
+          metric.tagSelections = [...metric.tagSelections, { ...tagSelection }];
         } else {
-          this.metrics = sortBy([...this.metrics, {
-            name: metricName,
-            tagSelections: [{...tagSelection}],
-            types: {}
-          }], [m => m.name]);
+          this.metrics = sortBy(
+            [
+              ...this.metrics,
+              {
+                name: metricName,
+                tagSelections: [{ ...tagSelection }],
+                types: {},
+              },
+            ],
+            [(m) => m.name]
+          );
         }
       }
     },
     loadMetrics() {
       if (window.localStorage) {
-        let persistedMetrics = localStorage.getItem(`applications/${this.instance.registration.name}/metrics`);
+        let persistedMetrics = localStorage.getItem(
+          `applications/${this.instance.registration.name}/metrics`
+        );
         if (persistedMetrics) {
           return JSON.parse(persistedMetrics);
         }
@@ -157,14 +199,21 @@ export default {
     },
     persistMetrics(value) {
       if (window.localStorage) {
-        localStorage.setItem(`applications/${this.instance.registration.name}/metrics`, JSON.stringify(value));
+        localStorage.setItem(
+          `applications/${this.instance.registration.name}/metrics`,
+          JSON.stringify(value)
+        );
       }
     },
     async fetchMetricIndex() {
       this.error = null;
       try {
         const res = await this.instance.fetchMetrics();
-        if (res.headers['content-type'].includes('application/vnd.spring-boot.actuator.v2')) {
+        if (
+          res.headers["content-type"].includes(
+            "application/vnd.spring-boot.actuator.v2"
+          )
+        ) {
           this.availableMetrics = res.data.names;
           this.availableMetrics.sort();
           this.selectedMetric = this.availableMetrics[0];
@@ -172,41 +221,42 @@ export default {
           this.isOldMetrics = true;
         }
       } catch (error) {
-        console.warn('Fetching metric index failed:', error);
+        console.warn("Fetching metric index failed:", error);
         this.hasLoaded = true;
         this.error = error;
       }
     },
     async fetchAvailableTags(metricName) {
       this.availableTags = null;
-      this.stateFetchingTags = 'executing';
+      this.stateFetchingTags = "executing";
       try {
         const response = await this.instance.fetchMetric(metricName);
         this.availableTags = response.data.availableTags;
-        this.stateFetchingTags = 'completed';
+        this.stateFetchingTags = "completed";
         this.selectedTags = {};
         if (this.availableTags) {
-          this.availableTags.forEach(t => this.selectedTags[t.tag] = undefined);
+          this.availableTags.forEach(
+            (t) => (this.selectedTags[t.tag] = undefined)
+          );
         }
       } catch (error) {
-        console.warn('Fetching metric tags failed:', error);
-        this.stateFetchingTags = 'failed';
+        console.warn("Fetching metric tags failed:", error);
+        this.stateFetchingTags = "failed";
       }
-    }
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      id: 'metrics',
-      name: 'instances/metrics',
-      parent: 'instances',
-      path: 'metrics',
+      id: "metrics",
+      name: "instances/metrics",
+      parent: "instances",
+      path: "metrics",
       component: this,
-      label: 'instances.metrics.label',
+      label: "instances.metrics.label",
       group: VIEW_GROUP.INSIGHTS,
       order: 50,
-      isEnabled: ({instance}) => instance.hasEndpoint('metrics')
+      isEnabled: ({ instance }) => instance.hasEndpoint("metrics"),
     });
-  }
-}
+  },
+};
 </script>
-

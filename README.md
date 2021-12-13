@@ -1,5 +1,5 @@
-codecentric's Spring Boot Admin
-===============================
+# codecentric's Spring Boot Admin
+
 [![Apache License 2](https://img.shields.io/badge/license-ASF2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.txt)
 ![Build Status](https://github.com/codecentric/spring-boot-admin/actions/workflows/build-main.yml/badge.svg?branch=master)
 [![codecov](https://codecov.io/gh/codecentric/spring-boot-admin/branch/master/graph/badge.svg?token=u5SWsZpj5S)](https://codecov.io/gh/codecentric/spring-boot-admin)
@@ -14,29 +14,29 @@ Monitoring Python applications is available using [Pyctuator](https://github.com
 
 Spring Boot Admin provides the following features for registered applications:
 
-* Show health status
-* Show details, like
-  * JVM & memory metrics
-  * micrometer.io metrics
-  * Datasource metrics
-  * Cache metrics
-* Show build-info number
-* Follow and download logfile
-* View jvm system- & environment-properties
-* View Spring Boot Configuration Properties
-* Support for Spring Cloud's postable /env- &/refresh-endpoint
-* Easy loglevel management
-* Interact with JMX-beans
-* View thread dump
-* View http-traces
-* View auditevents
-* View http-endpoints
-* View scheduled tasks
-* View and delete active sessions (using spring-session)
-* View Flyway / Liquibase database migrations
-* Download heapdump
-* Notification on status change (via e-mail, Slack, Hipchat, ...)
-* Event journal of status changes (non persistent)
+- Show health status
+- Show details, like
+  - JVM & memory metrics
+  - micrometer.io metrics
+  - Datasource metrics
+  - Cache metrics
+- Show build-info number
+- Follow and download logfile
+- View jvm system- & environment-properties
+- View Spring Boot Configuration Properties
+- Support for Spring Cloud's postable /env- &/refresh-endpoint
+- Easy loglevel management
+- Interact with JMX-beans
+- View thread dump
+- View http-traces
+- View auditevents
+- View http-endpoints
+- View scheduled tasks
+- View and delete active sessions (using spring-session)
+- View Flyway / Liquibase database migrations
+- Download heapdump
+- Notification on status change (via e-mail, Slack, Hipchat, ...)
+- Event journal of status changes (non persistent)
 
 ## Getting Started
 
@@ -60,15 +60,16 @@ alt="Spring Boot® Admin - Monitoring and Configuring Spring Boot Applications a
 
 Having trouble with codecentric's Spring Boot Admin? We’d like to help!
 
- * Check the [reference documentation](http://codecentric.github.io/spring-boot-admin/current/).
+- Check the [reference documentation](http://codecentric.github.io/spring-boot-admin/current/).
 
- * Ask a question on [stackoverflow.com](http://stackoverflow.com/questions/tagged/spring-boot-admin) - we monitor questions tagged with `spring-boot-admin`.
+- Ask a question on [stackoverflow.com](http://stackoverflow.com/questions/tagged/spring-boot-admin) - we monitor questions tagged with `spring-boot-admin`.
 
- * Ask for help in our [spring-boot-admin Gitter chat](https://gitter.im/codecentric/spring-boot-admin)
+- Ask for help in our [spring-boot-admin Gitter chat](https://gitter.im/codecentric/spring-boot-admin)
 
- * Report bugs at http://github.com/codecentric/spring-boot-admin/issues.
+- Report bugs at http://github.com/codecentric/spring-boot-admin/issues.
 
 ## Reference Guide
+
 [Version 2.4.3](http://codecentric.github.io/spring-boot-admin/2.4.3/)
 
 [Version 2.3.1](http://codecentric.github.io/spring-boot-admin/2.3.1/)
@@ -76,12 +77,15 @@ Having trouble with codecentric's Spring Boot Admin? We’d like to help!
 [Version 1.5.7](http://codecentric.github.io/spring-boot-admin/1.5.7/)
 
 ## Trademarks and licenses
+
 The source code of codecentric's Spring Boot Admin is licensed under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 Spring, Spring Boot and Spring Cloud are trademarks of [Pivotal Software, Inc.](https://pivotal.io/) in the U.S. and other countries.
 
 ## Snapshot builds
+
 You can access snapshot builds from the sonatype snapshot repository by adding the following to your `repositories`:
+
 ```xml
 <repository>
 	<id>sonatype-nexus-snapshots</id>
@@ -99,39 +103,40 @@ You can access snapshot builds from the sonatype snapshot repository by adding t
 ## Screenshots
 
 ![Screenshot application list](/images/screenshot.png)
-*Dashboard with desktop notifications*
+_Dashboard with desktop notifications_
 
 ![Screenshot details](/images/screenshot-details.png)
-*View application health, info and details*
+_View application health, info and details_
 
 ![Screenshot metrics](/images/screenshot-metrics.png)
-*View metric counters and gauges*
+_View metric counters and gauges_
 
 ![Screenshot logfile](/images/screenshot-logfile.png)
-*View logfile (with follow)*
+_View logfile (with follow)_
 
 ![Screenshot environment](/images/screenshot-environment.png)
-*View and change Spring environment (via Spring Cloud)*
+_View and change Spring environment (via Spring Cloud)_
 
 ![Screenshot logging](/images/screenshot-logging.png)
-*Manage Logback logger levels*
+_Manage Logback logger levels_
 
 ![Screenshot jmx](/images/screenshot-jmx.png)
-*View and use JMX beans via jolokia*
+_View and use JMX beans via jolokia_
 
 ![Screenshot threads](/images/screenshot-threads.png)
-*View thread dump*
+_View thread dump_
 
 ![Screenshot traces](/images/screenshot-trace.png)
-*View http request traces*
+_View http request traces_
 
 ![Screenshot journal](/images/screenshot-journal.png)
-*View history of registered applications*
+_View history of registered applications_
 
 ## Build
+
 **Requirements:**
 
-* JDK >= 1.8
+- JDK >= 1.8
 
 Please make sure you set `$JAVA_HOME` points to the correct JDK.
 
@@ -140,4 +145,5 @@ Please make sure you set `$JAVA_HOME` points to the correct JDK.
 ```
 
 ## Contributing
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) file.
