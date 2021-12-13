@@ -15,12 +15,19 @@
   -->
 
 <template>
-  <section :class="{ 'is-loading' : !hasLoaded }" class="section">
+  <section :class="{ 'is-loading': !hasLoaded }" class="section">
     <template v-if="hasLoaded">
-      <sba-alert v-if="error" :error="error" :title="$t('instances.scheduledtasks.fetch_failed')" />
+      <sba-alert
+        v-if="error"
+        :error="error"
+        :title="$t('instances.scheduledtasks.fetch_failed')"
+      />
 
       <div v-else-if="!hasData" class="message is-warning">
-        <div class="message-body" v-text="$t('instances.scheduledtasks.no_scheduledtasks')" />
+        <div
+          class="message-body"
+          v-text="$t('instances.scheduledtasks.no_scheduledtasks')"
+        />
       </div>
 
       <template v-if="hasCronData">
@@ -41,13 +48,24 @@
       </template>
 
       <template v-if="hasFixedDelayData">
-        <h3 class="title" v-text="$t('instances.scheduledtasks.fixed_delay.title')" />
+        <h3
+          class="title"
+          v-text="$t('instances.scheduledtasks.fixed_delay.title')"
+        />
         <table class="metrics table is-fullwidth">
           <thead>
             <tr>
-              <th v-text="$t('instances.scheduledtasks.fixed_delay.runnable')" />
-              <th v-text="$t('instances.scheduledtasks.fixed_delay.initial_delay_ms')" />
-              <th v-text="$t('instances.scheduledtasks.fixed_delay.interval_ms')" />
+              <th
+                v-text="$t('instances.scheduledtasks.fixed_delay.runnable')"
+              />
+              <th
+                v-text="
+                  $t('instances.scheduledtasks.fixed_delay.initial_delay_ms')
+                "
+              />
+              <th
+                v-text="$t('instances.scheduledtasks.fixed_delay.interval_ms')"
+              />
             </tr>
           </thead>
           <tbody v-for="task in fixedDelay" :key="task.runnable.target">
@@ -61,13 +79,24 @@
       </template>
 
       <template v-if="hasFixedRateData">
-        <h3 class="title" v-text="$t('instances.scheduledtasks.fixed_rate.title')" />
+        <h3
+          class="title"
+          v-text="$t('instances.scheduledtasks.fixed_rate.title')"
+        />
         <table class="metrics table is-fullwidth">
           <thead>
             <tr>
-              <th v-text="$t('instances.scheduledtasks.fixed_delay.runnable')" />
-              <th v-text="$t('instances.scheduledtasks.fixed_delay.initial_delay_ms')" />
-              <th v-text="$t('instances.scheduledtasks.fixed_delay.interval_ms')" />
+              <th
+                v-text="$t('instances.scheduledtasks.fixed_delay.runnable')"
+              />
+              <th
+                v-text="
+                  $t('instances.scheduledtasks.fixed_delay.initial_delay_ms')
+                "
+              />
+              <th
+                v-text="$t('instances.scheduledtasks.fixed_delay.interval_ms')"
+              />
             </tr>
           </thead>
           <tbody v-for="task in fixedRate" :key="task.runnable.target">
@@ -84,22 +113,22 @@
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import {VIEW_GROUP} from '../../index';
+import Instance from "@/services/instance";
+import { VIEW_GROUP } from "../../index";
 
 export default {
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     hasLoaded: false,
     error: null,
     cron: null,
     fixedDelay: null,
-    fixedRate: null
+    fixedRate: null,
   }),
   computed: {
     hasCronData: function () {
@@ -112,8 +141,10 @@ export default {
       return this.fixedRate && this.fixedRate.length;
     },
     hasData: function () {
-      return this.hasCronData || this.hasFixedDelayData || this.hasFixedRateData;
-    }
+      return (
+        this.hasCronData || this.hasFixedDelayData || this.hasFixedRateData
+      );
+    },
   },
   created() {
     this.fetchScheduledTasks();
@@ -127,23 +158,23 @@ export default {
         this.fixedDelay = res.data.fixedDelay;
         this.fixedRate = res.data.fixedRate;
       } catch (error) {
-        console.warn('Fetching scheduled tasks failed:', error);
+        console.warn("Fetching scheduled tasks failed:", error);
         this.error = error;
       }
       this.hasLoaded = true;
-    }
+    },
   },
-  install({viewRegistry}) {
+  install({ viewRegistry }) {
     viewRegistry.addView({
-      name: 'instances/scheduledtasks',
-      parent: 'instances',
-      path: 'scheduledtasks',
+      name: "instances/scheduledtasks",
+      parent: "instances",
+      path: "scheduledtasks",
       component: this,
-      label: 'instances.scheduledtasks.label',
+      label: "instances.scheduledtasks.label",
       group: VIEW_GROUP.INSIGHTS,
       order: 950,
-      isEnabled: ({instance}) => instance.hasEndpoint('scheduledtasks')
+      isEnabled: ({ instance }) => instance.hasEndpoint("scheduledtasks"),
     });
-  }
-}
+  },
+};
 </script>

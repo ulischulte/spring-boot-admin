@@ -21,53 +21,53 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      icon: {
-        type: [String, Array],
-        required: true,
-      },
-      size: {
-        type: String,
-        default: null
-      },
-      iconClass: {
-        type: String,
-        default: null
-      }
-    }
-  }
+export default {
+  props: {
+    icon: {
+      type: [String, Array],
+      required: true,
+    },
+    size: {
+      type: String,
+      default: null,
+    },
+    iconClass: {
+      type: String,
+      default: null,
+    },
+  },
+};
 </script>
 
 <style lang="scss">
-  @import "~@/assets/css/utilities";
+@import "~@/assets/css/utilities";
 
-  .icon-button {
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 1em;
-    color: inherit;
+.icon-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1em;
+  color: inherit;
 
-    &:not([disabled]) {
-      cursor: pointer;
+  &:not([disabled]) {
+    cursor: pointer;
 
-      &:hover {
-        color: $black;
-      }
-
-      & svg {
-        fill: currentcolor;
-      }
+    &:hover {
+      color: $black;
     }
 
-    &:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-
-    &:active {
-      outline: none;
+    & svg {
+      fill: currentcolor;
     }
   }
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:active {
+    outline: none;
+  }
+}
 </style>

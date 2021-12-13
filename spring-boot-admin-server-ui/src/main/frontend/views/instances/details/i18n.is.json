@@ -3,7 +3,7 @@
     "details": {
       "label": "Smáatriði",
       "fetch_failed": "Mistókst að sækja firð.",
-      "cache":{
+      "cache": {
         "fetch_failed": "Mistókst að sækja firð skyndiminna.",
         "hit_ratio": "Hit ratio",
         "hits": "Hits",

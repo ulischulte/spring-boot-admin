@@ -18,31 +18,36 @@
   <sba-panel :title="$t('instances.details.health.title')">
     <template v-slot:actions>
       <router-link
-        :to="{ name: 'journal', query: { 'instanceId' : instance.id } }"
+        :to="{ name: 'journal', query: { instanceId: instance.id } }"
         class="button icon-button"
       >
         <font-awesome-icon icon="history" />
       </router-link>
     </template>
     <div>
-      <sba-alert v-if="error" :error="error" :title="$t('instances.details.health.fetch_failed')" severity="WARN" />
+      <sba-alert
+        v-if="error"
+        :error="error"
+        :title="$t('instances.details.health.fetch_failed')"
+        severity="WARN"
+      />
       <health-details :health="health" name="Instance" />
     </div>
   </sba-panel>
 </template>
 
 <script>
-import Instance from '@/services/instance';
-import healthDetails from './health-details';
+import Instance from "@/services/instance";
+import healthDetails from "./health-details";
 
 export default {
   props: {
     instance: {
       type: Instance,
-      required: true
-    }
+      required: true,
+    },
   },
-  components: {healthDetails},
+  components: { healthDetails },
   data: () => ({
     error: null,
     liveHealth: null,
@@ -53,7 +58,7 @@ export default {
   computed: {
     health() {
       return this.liveHealth || this.instance.statusInfo;
-    }
+    },
   },
   methods: {
     async fetchHealth() {
@@ -62,10 +67,10 @@ export default {
         const res = await this.instance.fetchHealth();
         this.liveHealth = res.data;
       } catch (error) {
-        console.warn('Fetching live health failed:', error);
+        console.warn("Fetching live health failed:", error);
         this.error = error;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>

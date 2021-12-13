@@ -26,17 +26,17 @@
 </template>
 
 <script>
-  export default {
-    props: {
-      tags: {
-        type: Object,
-        required: true
-      }
+export default {
+  props: {
+    tags: {
+      type: Object,
+      required: true,
     },
-    computed: {
-      hasTags() {
-        return Object.keys(this.tags).length > 0;
-      }
-    }
-  }
+  },
+  computed: {
+    hasTags() {
+      return Object.keys(this.tags).length > 0;
+    },
+  },
+};
 </script>

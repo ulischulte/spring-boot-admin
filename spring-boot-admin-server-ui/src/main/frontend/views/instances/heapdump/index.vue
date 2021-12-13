@@ -18,12 +18,22 @@
   <section class="section heapdump">
     <div>
       <div class="message is-warning">
-        <div class="message-body" v-html="$t('instances.heapdump.warn_sensitive_data')" />
+        <div
+          class="message-body"
+          v-html="$t('instances.heapdump.warn_sensitive_data')"
+        />
       </div>
       <div class="message is-warning">
-        <div class="message-body" v-html="$t('instances.heapdump.warn_dump_expensive')" />
+        <div
+          class="message-body"
+          v-html="$t('instances.heapdump.warn_dump_expensive')"
+        />
       </div>
-      <a class="button is-primary" :href="`instances/${instance.id}/actuator/heapdump`" target="_blank">
+      <a
+        class="button is-primary"
+        :href="`instances/${instance.id}/actuator/heapdump`"
+        target="_blank"
+      >
         <font-awesome-icon icon="download" />&nbsp;
         <span v-text="$t('instances.heapdump.download')" />
       </a>
@@ -32,39 +42,39 @@
 </template>
 
 <script>
-  import Instance from '@/services/instance';
-  import {VIEW_GROUP} from '../../index';
+import Instance from "@/services/instance";
+import { VIEW_GROUP } from "../../index";
 
-  export default {
-    props: {
-      instance: {
-        type: Instance,
-        required: true
-      }
+export default {
+  props: {
+    instance: {
+      type: Instance,
+      required: true,
     },
-    install({viewRegistry}) {
-      viewRegistry.addView({
-        name: 'instances/heapdump',
-        parent: 'instances',
-        path: 'heapdump',
-        component: this,
-        label: 'instances.heapdump.label',
-        group: VIEW_GROUP.JVM,
-        order: 800,
-        isEnabled: ({instance}) => instance.hasEndpoint('heapdump')
-      });
-    }
-  }
+  },
+  install({ viewRegistry }) {
+    viewRegistry.addView({
+      name: "instances/heapdump",
+      parent: "instances",
+      path: "heapdump",
+      component: this,
+      label: "instances.heapdump.label",
+      group: VIEW_GROUP.JVM,
+      order: 800,
+      isEnabled: ({ instance }) => instance.hasEndpoint("heapdump"),
+    });
+  },
+};
 </script>
 
 <style lang="scss">
-  .heapdump {
-    display: flex;
-    justify-content: space-around;
+.heapdump {
+  display: flex;
+  justify-content: space-around;
 
-    & > div {
-      display: flex;
-      flex-direction: column;
-    }
+  & > div {
+    display: flex;
+    flex-direction: column;
   }
+}
 </style>

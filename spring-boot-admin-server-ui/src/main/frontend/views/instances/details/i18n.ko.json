@@ -3,7 +3,7 @@
     "details": {
       "label": "상세",
       "fetch_failed": "분석 정보를 가져오는데 실패했습니다.",
-      "cache":{
+      "cache": {
         "fetch_failed": "캐시 분석 정보를 가져오는데 실패했습니다.",
         "hit_ratio": "히트율",
         "hits": "히트",

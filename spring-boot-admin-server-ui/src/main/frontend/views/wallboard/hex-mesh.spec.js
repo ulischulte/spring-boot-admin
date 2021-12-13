@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 
-import * as hm from './hex-mesh';
+import * as hm from "./hex-mesh";
 
-describe('calcLayout', () => {
-
-  it('should calculate optimum layout for 12 in 1594x879', () => {
+describe("calcLayout", () => {
+  it("should calculate optimum layout for 12 in 1594x879", () => {
     const result = hm.calcLayout(12, 1594, 879);
 
     expect(result).toEqual({
       rows: 3,
       cols: 5,
-      sideLength: 175.8
+      sideLength: 175.8,
     });
   });
 
-  it('should calculate optimum layout for 1 in 100x100', () => {
+  it("should calculate optimum layout for 1 in 100x100", () => {
     const result = hm.calcLayout(1, 100, 100);
 
     expect(result).toEqual({
       rows: 1,
       cols: 1,
-      sideLength: 50
+      sideLength: 50,
     });
   });
-
 });

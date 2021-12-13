@@ -18,35 +18,58 @@
   <table class="table is-hoverable is-fullwidth">
     <thead>
       <tr>
-        <th>
-          Logger
-        </th>
+        <th>Logger</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="logger in loggers.slice(0, this.visibleLimit)" :key="logger.name">
+      <tr
+        v-for="logger in loggers.slice(0, this.visibleLimit)"
+        :key="logger.name"
+      >
         <td>
           <span class="is-breakable" v-text="logger.name" />&nbsp;
-          <span class="tag is-primary is-uppercase" v-if="logger.isNew" v-text="$t('instances.loggers.new')" />
-          <sba-logger-control class="is-pulled-right"
-                              :level-options="levels"
-                              :value="logger.level"
-                              :status="loggersStatus[logger.name]"
-                              :allow-reset="logger.name !== 'ROOT'"
-                              @input="level => $emit('configureLogger', {logger, level})"
+          <span
+            class="tag is-primary is-uppercase"
+            v-if="logger.isNew"
+            v-text="$t('instances.loggers.new')"
+          />
+          <sba-logger-control
+            class="is-pulled-right"
+            :level-options="levels"
+            :value="logger.level"
+            :status="loggersStatus[logger.name]"
+            :allow-reset="logger.name !== 'ROOT'"
+            @input="(level) => $emit('configureLogger', { logger, level })"
           />
 
           <p
             class="has-text-danger"
-            v-if="loggersStatus[logger.name] && loggersStatus[logger.name].status === 'failed'"
+            v-if="
+              loggersStatus[logger.name] &&
+              loggersStatus[logger.name].status === 'failed'
+            "
           >
-            <font-awesome-icon class="has-text-danger" icon="exclamation-triangle" />
-            <span v-text="$t('instances.loggers.setting_loglevel_failed', {logger: logger.name, loglevel: loggersStatus[logger.name].level})" />
+            <font-awesome-icon
+              class="has-text-danger"
+              icon="exclamation-triangle"
+            />
+            <span
+              v-text="
+                $t('instances.loggers.setting_loglevel_failed', {
+                  logger: logger.name,
+                  loglevel: loggersStatus[logger.name].level,
+                })
+              "
+            />
           </p>
         </td>
       </tr>
       <tr v-if="loggers.length === 0">
-        <td class="is-muted" colspan="5" v-text="$t('instances.loggers.no_loggers_found')" />
+        <td
+          class="is-muted"
+          colspan="5"
+          v-text="$t('instances.loggers.no_loggers_found')"
+        />
       </tr>
     </tbody>
     <infinite-loading ref="infinite" @infinite="increaseScroll">
@@ -56,44 +79,44 @@
   </table>
 </template>
 <script>
-    import InfiniteLoading from 'vue-infinite-loading'
-    import SbaLoggerControl from './logger-control'
+import InfiniteLoading from "vue-infinite-loading";
+import SbaLoggerControl from "./logger-control";
 
-    export default {
-    components: {InfiniteLoading, SbaLoggerControl},
-    props: {
-      levels: {
-        type: Array,
-        required: true
+export default {
+  components: { InfiniteLoading, SbaLoggerControl },
+  props: {
+    levels: {
+      type: Array,
+      required: true,
+    },
+    loggers: {
+      type: Array,
+      required: true,
+    },
+    loggersStatus: {
+      type: Object,
+      required: true,
+    },
+  },
+  data: () => ({
+    visibleLimit: 25,
+  }),
+  watch: {
+    loggers: {
+      handler() {
+        this.$refs.infinite.stateChanger.reset();
       },
-      loggers: {
-        type: Array,
-        required: true
-      },
-      loggersStatus: {
-        type: Object,
-        required: true
+    },
+  },
+  methods: {
+    increaseScroll(state) {
+      if (this.visibleLimit < this.loggers.length) {
+        this.visibleLimit += 25;
+        state.loaded();
+      } else {
+        state.complete();
       }
     },
-    data: () => ({
-      visibleLimit: 25
-    }),
-    watch: {
-      loggers: {
-        handler() {
-          this.$refs.infinite.stateChanger.reset();
-        }
-      },
-    },
-    methods: {
-      increaseScroll(state) {
-        if (this.visibleLimit < this.loggers.length) {
-          this.visibleLimit += 25;
-          state.loaded();
-        } else {
-          state.complete();
-        }
-      }
-    }
-  }
+  },
+};
 </script>

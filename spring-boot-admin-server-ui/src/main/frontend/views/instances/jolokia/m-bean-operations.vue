@@ -16,51 +16,64 @@
 
 <template>
   <div>
-    <mBeanOperation v-for="(operation, name) in mBean.op" :key="`op-${name}`"
-                    :name="name" :descriptor="operation" @click="invoke(name, operation)"
+    <mBeanOperation
+      v-for="(operation, name) in mBean.op"
+      :key="`op-${name}`"
+      :name="name"
+      :descriptor="operation"
+      @click="invoke(name, operation)"
     />
-    <m-bean-operation-invocation v-if="invocation" :name="invocation.name" :descriptor="invocation.descriptor"
-                                 :on-execute="execute" :on-close="closeInvocation"
+    <m-bean-operation-invocation
+      v-if="invocation"
+      :name="invocation.name"
+      :descriptor="invocation.descriptor"
+      :on-execute="execute"
+      :on-close="closeInvocation"
     />
   </div>
 </template>
 
 <script>
-  import Instance from '@/services/instance';
-  import {MBean} from './index';
-  import mBeanOperation from './m-bean-operation';
-  import mBeanOperationInvocation from './m-bean-operation-invocation';
+import Instance from "@/services/instance";
+import { MBean } from "./index";
+import mBeanOperation from "./m-bean-operation";
+import mBeanOperationInvocation from "./m-bean-operation-invocation";
 
-  export default {
-    props: {
-      domain: {
-        type: String,
-        required: true
-      },
-      mBean: {
-        type: MBean,
-        required: true
-      },
-      instance: {
-        type: Instance,
-        required: true
-      }
+export default {
+  props: {
+    domain: {
+      type: String,
+      required: true,
     },
-    components: {mBeanOperation, mBeanOperationInvocation},
-    data: () => ({
-      invocation: null
-    }),
-    computed: {},
-    methods: {
-      closeInvocation() {
-        this.invocation = null
-      },
-      invoke(name, descriptor) {
-        this.invocation = {name, descriptor};
-      },
-      execute(args) {
-        return this.instance.invokeMBeanOperation(this.domain, this.mBean.descriptor.raw, this.invocation.name, args);
-      }
-    }
-  }
+    mBean: {
+      type: MBean,
+      required: true,
+    },
+    instance: {
+      type: Instance,
+      required: true,
+    },
+  },
+  components: { mBeanOperation, mBeanOperationInvocation },
+  data: () => ({
+    invocation: null,
+  }),
+  computed: {},
+  methods: {
+    closeInvocation() {
+      this.invocation = null;
+    },
+    invoke(name, descriptor) {
+      this.invocation = { name, descriptor };
+    },
+    execute(args) {
+      return this.instance.invokeMBeanOperation(
+        this.domain,
+        this.mBean.descriptor.raw,
+        this.invocation.name,
+        args
+      );
+    },
+  },
+};
 </script>

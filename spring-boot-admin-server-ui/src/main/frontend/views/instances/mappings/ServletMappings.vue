@@ -28,8 +28,9 @@
         <template v-for="servletMapping in servlets">
           <tr :key="`${servletMapping.name}`">
             <td>
-              <div v-for="mapping in servletMapping.mappings"
-                   :key="`${servletMapping.name}_${mapping}`"
+              <div
+                v-for="mapping in servletMapping.mappings"
+                :key="`${servletMapping.name}_${mapping}`"
               >
                 <code v-text="mapping" />
               </div>
@@ -43,12 +44,12 @@
   </div>
 </template>
 <script>
-  export default {
-    props: {
-      servlets: {
-        type: Array,
-        default: () => []
-      }
-    }
-  }
+export default {
+  props: {
+    servlets: {
+      type: Array,
+      default: () => [],
+    },
+  },
+};
 </script>

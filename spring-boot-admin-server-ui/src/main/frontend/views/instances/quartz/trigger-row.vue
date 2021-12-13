@@ -2,7 +2,12 @@
   <tbody>
     <tr>
       <td>
-        <a class="icon" :class="{'icon--open': isOpen}" @click="toggle" role="button" />
+        <a
+          class="icon"
+          :class="{ 'icon--open': isOpen }"
+          @click="toggle"
+          role="button"
+        />
         <span v-text="triggerDetail.name" />
       </td>
       <td v-text="triggerDetail.description" />
@@ -18,7 +23,7 @@
     <tr v-if="isOpen">
       <td colspan="10">
         <table class="table">
-          <tr v-for="(value,name) in triggerTypeDetails" :key="name">
+          <tr v-for="(value, name) in triggerTypeDetails" :key="name">
             <td v-text="name" />
             <td v-text="value" />
           </tr>
@@ -29,34 +34,34 @@
 </template>
 
 <script>
-
 export default {
-  name: 'TriggerRow',
+  name: "TriggerRow",
   props: {
     triggerDetail: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
-      isOpen: false
-    }
+      isOpen: false,
+    };
   },
   computed: {
     triggerTypeDetails() {
-      return ['calendarInterval', 'cron', 'custom', 'dailyTimeInterval', 'simple']
-        .map(type => this.triggerDetail[type])
-        .find(ttd => ttd !== undefined) || {}
-    }
+      return (
+        ["calendarInterval", "cron", "custom", "dailyTimeInterval", "simple"]
+          .map((type) => this.triggerDetail[type])
+          .find((ttd) => ttd !== undefined) || {}
+      );
+    },
   },
   methods: {
     toggle() {
-      this.isOpen = !this.isOpen
-    }
-  }
-
-}
+      this.isOpen = !this.isOpen;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -68,7 +73,7 @@ export default {
   margin-right: 10px;
 
   border-top: $iconSize solid transparent;
-  border-left: $iconSize*1.2 solid #555;
+  border-left: $iconSize * 1.2 solid #555;
   border-bottom: $iconSize solid transparent;
 
   &--open {

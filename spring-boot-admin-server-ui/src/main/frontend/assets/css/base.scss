@@ -105,7 +105,7 @@ p.is-loading {
 //Bullets
 .has-bullet::before {
   background: currentColor;
-  content: '';
+  content: "";
   width: 0.75em;
   height: 0.75em;
   display: inline-block;
@@ -145,7 +145,7 @@ path.domain {
 }
 
 .fade-in-enter-active {
-  animation: .5s fade-in forwards;
+  animation: 0.5s fade-in forwards;
 }
 
 @keyframes fade-in {

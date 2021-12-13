@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import subscribing from '@/mixins/subscribing';
-import {timer} from '@/utils/rxjs';
-import moment from 'moment';
+import subscribing from "@/mixins/subscribing";
+import { timer } from "@/utils/rxjs";
+import moment from "moment";
 
 export default {
-  props: ['value'],
+  props: ["value"],
   mixins: [subscribing],
   data: () => ({
     startTs: null,
-    offset: null
+    offset: null,
   }),
   render() {
     return this._v(this.clock);
@@ -34,11 +34,13 @@ export default {
         return null;
       }
       const duration = moment.duration(this.value + this.offset);
-      return `${Math.floor(duration.asDays())}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
-    }
+      return `${Math.floor(
+        duration.asDays()
+      )}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s`;
+    },
   },
   watch: {
-    value: 'subscribe'
+    value: "subscribe",
   },
   methods: {
     createSubscription() {
@@ -49,9 +51,9 @@ export default {
         return timer(0, 1000).subscribe({
           next: () => {
             vm.offset = moment().valueOf() - vm.startTs.valueOf();
-          }
-        })
+          },
+        });
       }
-    }
-  }
-}
+    },
+  },
+};
