@@ -15,28 +15,34 @@
   -->
 
 <template>
-  <section :class="{ 'is-loading' : !hasLoaded }" class="section">
-    <sba-alert v-if="error" :error="error" :title="$t('instances.loggers.fetch_failed')" />
+  <section :class="{ 'is-loading': !hasLoaded }" class="section">
+    <sba-alert
+      v-if="error"
+      :error="error"
+      :title="$t('instances.loggers.fetch_failed')"
+    />
 
     <div v-sticks-below="['#navigation']" class="loggers__header">
       <div class="field is-grouped">
         <div class="control">
-          <sba-toggle-scope-button v-if="instanceCount > 1"
-                                   :instance-count="instanceCount"
-                                   @changeScope="$emit('changeScope', $event)"
+          <sba-toggle-scope-button
+            v-if="instanceCount > 1"
+            :instance-count="instanceCount"
+            @changeScope="$emit('changeScope', $event)"
           />
         </div>
         <div class="control is-expanded">
           <div class="field has-addons">
             <p class="control is-expanded has-icons-left">
-              <input v-model="filter.name" class="input" type="search">
+              <input v-model="filter.name" class="input" type="search" />
               <span class="icon is-small is-left">
                 <font-awesome-icon icon="filter" />
               </span>
             </p>
             <p class="control">
               <span class="button is-static">
-                <span v-text="filteredLoggers.length" /> / <span v-text="loggerConfig.loggers.length" />
+                <span v-text="filteredLoggers.length" /> /
+                <span v-text="loggerConfig.loggers.length" />
               </span>
             </p>
           </div>
@@ -44,14 +50,14 @@
           <div class="field is-grouped">
             <div class="control">
               <label class="checkbox">
-                <input v-model="filter.classOnly" type="checkbox">
-                {{ $t('instances.loggers.filter.class_only') }}
+                <input v-model="filter.classOnly" type="checkbox" />
+                {{ $t("instances.loggers.filter.class_only") }}
               </label>
             </div>
             <div class="control">
               <label class="checkbox">
-                <input v-model="filter.configuredOnly" type="checkbox">
-                {{ $t('instances.loggers.filter.configured') }}
+                <input v-model="filter.configuredOnly" type="checkbox" />
+                {{ $t("instances.loggers.filter.configured") }}
               </label>
             </div>
           </div>
@@ -61,9 +67,17 @@
 
     <div v-if="failedInstances > 0" class="message is-warning">
       <div class="message-body">
-        <font-awesome-icon class="has-text-warning" icon="exclamation-triangle" />
+        <font-awesome-icon
+          class="has-text-warning"
+          icon="exclamation-triangle"
+        />
         <span
-          v-text="$t('instances.loggers.fetch_failed_some_instances', {failed: failedInstances, count: instanceCount})"
+          v-text="
+            $t('instances.loggers.fetch_failed_some_instances', {
+              failed: failedInstances,
+              count: instanceCount,
+            })
+          "
         />
       </div>
     </div>
@@ -72,18 +86,18 @@
       :levels="loggerConfig.levels"
       :loggers="filteredLoggers"
       :loggers-status="loggersStatus"
-      @configureLogger="({logger, level}) => configureLogger(logger, level)"
+      @configureLogger="({ logger, level }) => configureLogger(logger, level)"
     />
   </section>
 </template>
 
 <script>
-import sticksBelow from '@/directives/sticks-below';
-import {finalize, from, listen} from '@/utils/rxjs';
-import LoggersList from './loggers-list';
-import SbaToggleScopeButton from '@/components/sba-toggle-scope-button';
+import sticksBelow from "@/directives/sticks-below";
+import { finalize, from, listen } from "@/utils/rxjs";
+import LoggersList from "./loggers-list";
+import SbaToggleScopeButton from "@/components/sba-toggle-scope-button";
 
-const isClassName = name => /\.[A-Z]/.test(name);
+const isClassName = (name) => /\.[A-Z]/.test(name);
 
 const addToFilter = (oldFilter, addedFilter) =>
   !oldFilter
@@ -91,85 +105,96 @@ const addToFilter = (oldFilter, addedFilter) =>
     : (val, key) => oldFilter(val, key) && addedFilter(val, key);
 
 const addLoggerCreationEntryIfLoggerNotPresent = (nameFilter, loggers) => {
-  if (nameFilter && !loggers.some(logger => logger.name === nameFilter)) {
+  if (nameFilter && !loggers.some((logger) => logger.name === nameFilter)) {
     loggers.unshift({
-      level: [{
-        configuredLevel: null,
-        effectiveLevel: null,
-        instanceId: null
-      }],
+      level: [
+        {
+          configuredLevel: null,
+          effectiveLevel: null,
+          instanceId: null,
+        },
+      ],
       name: nameFilter,
-      isNew: true
-    })
+      isNew: true,
+    });
   }
 };
 
 export default {
-  components: {SbaToggleScopeButton, LoggersList},
-  directives: {sticksBelow},
+  components: { SbaToggleScopeButton, LoggersList },
+  directives: { sticksBelow },
   props: {
     scope: {
       type: String,
-      required: true
+      required: true,
     },
     instanceCount: {
       type: Number,
-      required: true
+      required: true,
     },
     loggersService: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   data: () => ({
     hasLoaded: false,
     error: null,
     failedInstances: 0,
-    loggerConfig: {loggers: [], levels: []},
+    loggerConfig: { loggers: [], levels: [] },
     filter: {
-      name: '',
+      name: "",
       classOnly: false,
       configuredOnly: false,
     },
-    loggersStatus: {}
+    loggersStatus: {},
   }),
   computed: {
     filteredLoggers() {
       const filterFn = this.getFilterFn();
-      const filteredLoggers = filterFn ? this.loggerConfig.loggers.filter(filterFn) : this.loggerConfig.loggers;
-      addLoggerCreationEntryIfLoggerNotPresent(this.filter.name, filteredLoggers);
+      const filteredLoggers = filterFn
+        ? this.loggerConfig.loggers.filter(filterFn)
+        : this.loggerConfig.loggers;
+      addLoggerCreationEntryIfLoggerNotPresent(
+        this.filter.name,
+        filteredLoggers
+      );
       return filteredLoggers;
-    }
+    },
   },
   watch: {
     loggersService: {
       immediate: true,
       handler() {
         return this.fetchLoggers();
-      }
-    }
+      },
+    },
   },
   methods: {
     configureLogger(logger, level) {
       const vm = this;
       from(vm.loggersService.configureLogger(logger.name, level))
         .pipe(
-          listen(status => vm.$set(vm.loggersStatus, logger.name, {level, status})),
+          listen((status) =>
+            vm.$set(vm.loggersStatus, logger.name, { level, status })
+          ),
           finalize(() => vm.fetchLoggers())
         )
         .subscribe({
-          error: (error) => console.warn(`Configuring logger '${logger.name}' failed:`, error)
+          error: (error) =>
+            console.warn(`Configuring logger '${logger.name}' failed:`, error),
         });
     },
     async fetchLoggers() {
       this.error = null;
       this.failedInstances = 0;
       try {
-        const {errors, ...loggerConfig} = await this.loggersService.fetchLoggers();
+        const { errors, ...loggerConfig } =
+          await this.loggersService.fetchLoggers();
         this.loggerConfig = Object.freeze(loggerConfig);
         this.failedInstances = errors.length;
       } catch (error) {
-        console.warn('Fetching loggers failed:', error);
+        console.warn("Fetching loggers failed:", error);
         this.error = error;
       }
       this.hasLoaded = true;
@@ -178,22 +203,26 @@ export default {
       let filterFn = null;
 
       if (this.filter.classOnly) {
-        filterFn = addToFilter(filterFn, logger => isClassName(logger.name));
+        filterFn = addToFilter(filterFn, (logger) => isClassName(logger.name));
       }
 
       if (this.filter.configuredOnly) {
-        filterFn = addToFilter(filterFn, logger => logger.level.some(l => Boolean(l.configuredLevel)));
+        filterFn = addToFilter(filterFn, (logger) =>
+          logger.level.some((l) => Boolean(l.configuredLevel))
+        );
       }
 
       if (this.filter.name) {
         const normalizedFilter = this.filter.name.toLowerCase();
-        filterFn = addToFilter(filterFn, logger => logger.name.toLowerCase().includes(normalizedFilter));
+        filterFn = addToFilter(filterFn, (logger) =>
+          logger.name.toLowerCase().includes(normalizedFilter)
+        );
       }
 
       return filterFn;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss">

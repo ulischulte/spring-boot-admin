@@ -11,9 +11,7 @@
                   "headers": [],
                   "methods": [],
                   "params": [],
-                  "patterns": [
-                    "/**/favicon.ico"
-                  ],
+                  "patterns": ["/**/favicon.ico"],
                   "produces": []
                 }
               },
@@ -31,9 +29,7 @@
                   "headers": [],
                   "methods": [],
                   "params": [],
-                  "patterns": [
-                    "/error"
-                  ],
+                  "patterns": ["/error"],
                   "produces": []
                 }
               },
@@ -57,13 +53,9 @@
                     }
                   ],
                   "headers": [],
-                  "methods": [
-                    "POST"
-                  ],
+                  "methods": ["POST"],
                   "params": [],
-                  "patterns": [
-                    "/actuator/loggers/{name:.*}"
-                  ],
+                  "patterns": ["/actuator/loggers/{name:.*}"],
                   "produces": [
                     {
                       "mediaType": "application/vnd.spring-boot.actuator.v1+json"

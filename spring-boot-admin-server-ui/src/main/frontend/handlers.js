@@ -1,5 +1,3 @@
-import mappingsEndpoint from '@/mocks/instance/mappings';
+import mappingsEndpoint from "@/mocks/instance/mappings";
 
-export const handlers = [
-  ...mappingsEndpoint
-]
+export const handlers = [...mappingsEndpoint];

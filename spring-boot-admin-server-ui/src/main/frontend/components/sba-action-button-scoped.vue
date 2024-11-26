@@ -17,18 +17,27 @@
 <template>
   <div class="field is-horizontal">
     <div class="field-body">
-      <sba-toggle-scope-button v-if="instanceCount > 1"
-                               :instance-count="instanceCount"
-                               @changeScope="setScope"
+      <sba-toggle-scope-button
+        v-if="instanceCount > 1"
+        :instance-count="instanceCount"
+        @changeScope="setScope"
       />
       <div class="field has-icons-left">
-        <sba-confirm-button class="button is-light"
-                            :class="{'is-loading' : refreshStatus === 'executing', 'is-danger' : refreshStatus === 'failed', 'is-info' : refreshStatus === 'completed'}"
-                            :disabled="disabled"
-                            @click="click"
+        <sba-confirm-button
+          class="button is-light"
+          :class="{
+            'is-loading': refreshStatus === 'executing',
+            'is-danger': refreshStatus === 'failed',
+            'is-info': refreshStatus === 'completed',
+          }"
+          :disabled="disabled"
+          @click="click"
         >
           <slot v-if="label">
-            <span v-if="refreshStatus === 'completed'" v-text="labelCompleted" />
+            <span
+              v-if="refreshStatus === 'completed'"
+              v-text="labelCompleted"
+            />
             <span v-else-if="refreshStatus === 'failed'" v-text="labelFailed" />
             <span v-else v-text="label" />
           </slot>
@@ -40,41 +49,40 @@
 </template>
 
 <script>
-
-import {from, listen} from '@/utils/rxjs';
+import { from, listen } from "@/utils/rxjs";
 
 export default {
   props: {
     instanceCount: {
       type: Number,
-      required: true
+      required: true,
     },
     actionFn: {
       type: Function,
-      required: true
+      required: true,
     },
-    disabled: {type: Boolean, default: false},
+    disabled: { type: Boolean, default: false },
     label: {
       type: String,
-      default: undefined
+      default: undefined,
     },
     labelFailed: {
       type: String,
       default() {
-        return this.$t('term.execution_failed')
-      }
+        return this.$t("term.execution_failed");
+      },
     },
     labelCompleted: {
       type: String,
       default() {
-        return this.$t('term.execution_successful')
-      }
+        return this.$t("term.execution_successful");
+      },
     },
   },
   data: () => ({
     status: null,
     refreshStatus: null,
-    currentScope: 'instance'
+    currentScope: "instance",
   }),
   methods: {
     setScope(scope) {
@@ -82,13 +90,13 @@ export default {
     },
     click() {
       from(this.actionFn(this.currentScope))
-        .pipe(listen(status => this.refreshStatus = status))
+        .pipe(listen((status) => (this.refreshStatus = status)))
         .subscribe({
-          complete: () => setTimeout(() => this.refreshStatus = null, 2500)
+          complete: () => setTimeout(() => (this.refreshStatus = null), 2500),
         });
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style lang="scss">
@@ -106,4 +114,3 @@ export default {
   }
 }
 </style>
-

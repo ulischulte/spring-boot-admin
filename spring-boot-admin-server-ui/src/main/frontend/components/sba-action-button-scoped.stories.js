@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-import SbaActionButtonScoped from './sba-action-button-scoped.vue';
-import i18n from '@/i18n';
+import SbaActionButtonScoped from "./sba-action-button-scoped.vue";
+import i18n from "@/i18n";
 
 export default {
   component: SbaActionButtonScoped,
-  title: 'SBA Components/Action Button Scoped',
+  title: "SBA Components/Action Button Scoped",
 };
 
-const TemplateWithProps = (args, {argTypes}) => ({
-  components: {SbaActionButtonScoped},
+const TemplateWithProps = (args, { argTypes }) => ({
+  components: { SbaActionButtonScoped },
   props: Object.keys(argTypes),
   template: '<sba-action-button-scoped v-bind="$props" />',
-  i18n
+  i18n,
 });
 
 export const OneInstanceSuccessful = TemplateWithProps.bind({});
 OneInstanceSuccessful.args = {
   instanceCount: 1,
-  label: 'Label',
+  label: "Label",
   actionFn() {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve()
+        resolve();
       }, 2000);
     });
   },
@@ -45,24 +45,24 @@ OneInstanceSuccessful.args = {
 export const MultipleInstancesSuccessful = TemplateWithProps.bind({});
 MultipleInstancesSuccessful.args = {
   ...OneInstanceSuccessful.args,
-  instanceCount: 10
+  instanceCount: 10,
 };
 
 export const OneInstanceFailing = TemplateWithProps.bind({});
 OneInstanceFailing.args = {
   instanceCount: 1,
-  label: 'Label',
+  label: "Label",
   actionFn() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        reject()
+        reject();
       }, 2000);
     });
   },
 };
 
-const TemplateWithSlot = (args, {argTypes}) => ({
-  components: {SbaActionButtonScoped},
+const TemplateWithSlot = (args, { argTypes }) => ({
+  components: { SbaActionButtonScoped },
   props: Object.keys(argTypes),
   template: `
     <sba-action-button-scoped v-bind="$props">
@@ -72,7 +72,7 @@ const TemplateWithSlot = (args, {argTypes}) => ({
       <span v-else>Default Label</span>
     </template>
     </sba-action-button-scoped>`,
-  i18n
+  i18n,
 });
 
 export const SlottedOneInstanceSuccessful = TemplateWithSlot.bind({});
@@ -81,7 +81,7 @@ SlottedOneInstanceSuccessful.args = {
   actionFn() {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve()
+        resolve();
       }, 2000);
     });
   },
@@ -93,7 +93,7 @@ SlottedOneInstanceFailing.args = {
   actionFn() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        reject()
+        reject();
       }, 2000);
     });
   },

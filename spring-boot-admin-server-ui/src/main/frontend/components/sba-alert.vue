@@ -18,7 +18,10 @@
   <div class="message" :class="alertClass" role="alert" v-if="hasError()">
     <div class="message-body">
       <strong>
-        <font-awesome-icon :class="iconClass" icon="exclamation-triangle" />&nbsp;<span v-text="title" />
+        <font-awesome-icon
+          :class="iconClass"
+          icon="exclamation-triangle"
+        />&nbsp;<span v-text="title" />
       </strong>
       <p v-text="error.message" />
     </div>
@@ -27,46 +30,46 @@
 
 <script>
 export const Severity = {
-  ERROR: 'ERROR',
-  WARN: 'WARN',
-  INFO: 'INFO',
-  SUCCESS: 'SUCCESS',
+  ERROR: "ERROR",
+  WARN: "WARN",
+  INFO: "INFO",
+  SUCCESS: "SUCCESS",
 };
 
 export default {
-  name: 'SbaAlert',
+  name: "SbaAlert",
   props: {
     title: {
       type: String,
-      required: true
+      required: true,
     },
     error: {
       type: Error,
-      default: null
+      default: null,
     },
     severity: {
       type: String,
-      default: 'ERROR'
-    }
+      default: "ERROR",
+    },
   },
   data() {
     return {
       alertClass: {
-        'is-danger': this.severity.toUpperCase() === Severity.ERROR,
-        'is-warning': this.severity.toUpperCase() === Severity.WARN,
-        'is-info': this.severity.toUpperCase() === Severity.INFO,
-        'is-success': this.severity.toUpperCase() === Severity.SUCCESS,
+        "is-danger": this.severity.toUpperCase() === Severity.ERROR,
+        "is-warning": this.severity.toUpperCase() === Severity.WARN,
+        "is-info": this.severity.toUpperCase() === Severity.INFO,
+        "is-success": this.severity.toUpperCase() === Severity.SUCCESS,
       },
       iconClass: {
-        'has-text-danger': this.severity.toUpperCase() === Severity.ERROR,
-        'has-text-warning': this.severity.toUpperCase() === Severity.WARN
-      }
-    }
+        "has-text-danger": this.severity.toUpperCase() === Severity.ERROR,
+        "has-text-warning": this.severity.toUpperCase() === Severity.WARN,
+      },
+    };
   },
   methods: {
     hasError() {
       return this.error !== undefined && this.error !== null;
-    }
-  }
-}
+    },
+  },
+};
 </script>

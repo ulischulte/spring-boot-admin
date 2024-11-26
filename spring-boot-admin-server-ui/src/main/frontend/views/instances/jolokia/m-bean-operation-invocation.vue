@@ -25,13 +25,20 @@
 
         <template v-if="state === 'input-args'">
           <section class="modal-card-body" @keyup.ctrl.enter="invoke(args)">
-            <div class="field" v-for="(arg, idx) in descriptor.args" :key="arg.name">
+            <div
+              class="field"
+              v-for="(arg, idx) in descriptor.args"
+              :key="arg.name"
+            >
               <label class="label">
                 <span v-text="arg.name" />
-                <small class="is-muted has-text-weight-normal" v-text="arg.type" />
+                <small
+                  class="is-muted has-text-weight-normal"
+                  v-text="arg.type"
+                />
               </label>
               <div class="control">
-                <input type="text" class="input" v-model="args[idx]">
+                <input type="text" class="input" v-model="args[idx]" />
               </div>
               <p class="help" v-text="arg.desc" />
             </div>
@@ -39,7 +46,11 @@
           <footer class="modal-card-foot">
             <div class="field is-grouped is-grouped-right">
               <div class="control">
-                <button class="button is-primary" @click="invoke(args)" v-text="$t('instances.jolokia.execute')" />
+                <button
+                  class="button is-primary"
+                  @click="invoke(args)"
+                  v-text="$t('instances.jolokia.execute')"
+                />
               </div>
             </div>
           </footer>
@@ -60,12 +71,19 @@
                 <strong v-text="$t('instances.jolokia.execution_successful')" />
               </div>
             </div>
-            <pre v-if="descriptor.ret !== 'void'" v-text="prettyPrintedResult" />
+            <pre
+              v-if="descriptor.ret !== 'void'"
+              v-text="prettyPrintedResult"
+            />
           </section>
           <footer class="modal-card-foot">
             <div class="field is-grouped is-grouped-right">
               <div class="control">
-                <button class="button is-light" @click="abort" v-text="$t('term.close')" />
+                <button
+                  class="button is-light"
+                  @click="abort"
+                  v-text="$t('term.close')"
+                />
               </div>
             </div>
           </footer>
@@ -76,25 +94,29 @@
             <div class="message is-danger">
               <div class="message-body">
                 <strong>
-                  <font-awesome-icon class="has-text-danger"
-                                     icon="exclamation-triangle"
+                  <font-awesome-icon
+                    class="has-text-danger"
+                    icon="exclamation-triangle"
                   />
                   <span v-text="$t('instances.jolokia.execution_failed')" />
                 </strong>
                 <p v-text="error.message" />
               </div>
             </div>
-            <pre v-if="error.stacktrace"
-                 v-text="error.stacktrace"
-            />
-            <pre v-if="error.response && error.response.data"
-                 v-text="error.response.data"
+            <pre v-if="error.stacktrace" v-text="error.stacktrace" />
+            <pre
+              v-if="error.response && error.response.data"
+              v-text="error.response.data"
             />
           </section>
           <footer class="modal-card-foot">
             <div class="field is-grouped is-grouped-right">
               <div class="control">
-                <button class="button is-light" @click="abort" v-text="$t('instances.jolokia.close')" />
+                <button
+                  class="button is-light"
+                  @click="abort"
+                  v-text="$t('instances.jolokia.close')"
+                />
               </div>
             </div>
           </footer>
@@ -105,99 +127,99 @@
 </template>
 
 <script>
-
-  export default {
-    props: {
-      name: {
-        type: String,
-        required: true
-      },
-      descriptor: {
-        type: Object,
-        required: true
-      },
-      value: {
-        type: null,
-        default: null
-      },
-      onClose: {
-        type: Function,
-        required: true
-      },
-      onExecute: {
-        type: Function,
-        required: true
-      }
+export default {
+  props: {
+    name: {
+      type: String,
+      required: true,
     },
-    data: () => ({
-      state: null,
-      error: null,
-      args: null,
-      result: null
-    }),
-    computed: {
-      prettyPrintedResult() {
-        if (this.result && typeof this.result === 'string') {
-          try {
-            const o = JSON.parse(this.result);
-            return JSON.stringify(o, undefined, 4);
-          } catch (e) {
-            return this.result;
-          }
-        } else if (typeof result === 'object') {
-          return JSON.stringify(this.result, undefined, 4);
-        }
-        return this.result;
-      }
+    descriptor: {
+      type: Object,
+      required: true,
     },
-    methods: {
-      abort() {
-        this.onClose();
-      },
-      invoke(args) {
-        this.state = (args || this.descriptor.args.length === 0) ? 'prepared' : 'input-args';
-        this.args = args || new Array(this.descriptor.args.length);
-        this.error = null;
-        this.result = null;
-
-        if (this.state === 'prepared') {
-          this.execute()
-        }
-      },
-      async execute() {
-        this.state = 'executing';
+    value: {
+      type: null,
+      default: null,
+    },
+    onClose: {
+      type: Function,
+      required: true,
+    },
+    onExecute: {
+      type: Function,
+      required: true,
+    },
+  },
+  data: () => ({
+    state: null,
+    error: null,
+    args: null,
+    result: null,
+  }),
+  computed: {
+    prettyPrintedResult() {
+      if (this.result && typeof this.result === "string") {
         try {
-          const result = await this.onExecute(this.args);
-          if (result.data.status < 400) {
-            this.result = result.data.value;
-            this.state = 'completed';
-          } else {
-            const error = new Error(`Execution failed: ${result.data.error}`);
-            error.stacktrace = result.data.stacktrace;
-            this.state = 'failed';
-            this.error = error;
-            console.warn('Invocation failed', error);
-          }
-        } catch (error) {
-          this.state = 'failed';
-          this.error = error;
-          console.warn('Invocation failed', error);
+          const o = JSON.parse(this.result);
+          return JSON.stringify(o, undefined, 4);
+        } catch (e) {
+          return this.result;
         }
-      },
-      keyHandler(event) {
-        if (event.keyCode === 27) {
-          this.abort()
-        }
+      } else if (typeof result === "object") {
+        return JSON.stringify(this.result, undefined, 4);
+      }
+      return this.result;
+    },
+  },
+  methods: {
+    abort() {
+      this.onClose();
+    },
+    invoke(args) {
+      this.state =
+        args || this.descriptor.args.length === 0 ? "prepared" : "input-args";
+      this.args = args || new Array(this.descriptor.args.length);
+      this.error = null;
+      this.result = null;
+
+      if (this.state === "prepared") {
+        this.execute();
       }
     },
-    created() {
-      this.invoke();
+    async execute() {
+      this.state = "executing";
+      try {
+        const result = await this.onExecute(this.args);
+        if (result.data.status < 400) {
+          this.result = result.data.value;
+          this.state = "completed";
+        } else {
+          const error = new Error(`Execution failed: ${result.data.error}`);
+          error.stacktrace = result.data.stacktrace;
+          this.state = "failed";
+          this.error = error;
+          console.warn("Invocation failed", error);
+        }
+      } catch (error) {
+        this.state = "failed";
+        this.error = error;
+        console.warn("Invocation failed", error);
+      }
     },
-    mounted() {
-      document.addEventListener('keyup', this.keyHandler)
+    keyHandler(event) {
+      if (event.keyCode === 27) {
+        this.abort();
+      }
     },
-    beforeDestroy() {
-      document.removeEventListener('keyup', this.keyHandler)
-    },
-  }
+  },
+  created() {
+    this.invoke();
+  },
+  mounted() {
+    document.addEventListener("keyup", this.keyHandler);
+  },
+  beforeDestroy() {
+    document.removeEventListener("keyup", this.keyHandler);
+  },
+};
 </script>

@@ -20,11 +20,12 @@
       {{ selectedLanguage.label }} ({{ selectedLanguage.locale }})
     </a>
     <div class="navbar-dropdown">
-      <a class="navbar-item"
-         role="button"
-         v-for="language in languages"
-         :key="language.locale"
-         @click="localeChanged(language.locale)"
+      <a
+        class="navbar-item"
+        role="button"
+        v-for="language in languages"
+        :key="language.locale"
+        @click="localeChanged(language.locale)"
       >
         {{ language.label }} ({{ language.locale }})
       </a>
@@ -33,11 +34,10 @@
 </template>
 
 <script>
-
 export default {
   props: {
-    availableLocales: {type: Array, required: true},
-    currentLocale: {type: String, required: true}
+    availableLocales: { type: Array, required: true },
+    currentLocale: { type: String, required: true },
   },
   computed: {
     selectedLanguage() {
@@ -45,38 +45,39 @@ export default {
     },
     languages() {
       return this.availableLocales.map(this.mapLocale);
-    }
+    },
   },
   methods: {
     localeChanged(selectedLocale) {
       if (selectedLocale !== this.currentLocale) {
-        this.$emit('localeChanged', selectedLocale)
+        this.$emit("localeChanged", selectedLocale);
       }
     },
     mapLocale(locale) {
       try {
-        const localeUppercase = locale.split('-').pop().toUpperCase();
-        let label = new Intl.DisplayNames([localeUppercase, this.$i18n.locale], {type: 'region'}).of(localeUppercase);
+        const localeUppercase = locale.split("-").pop().toUpperCase();
+        let label = new Intl.DisplayNames(
+          [localeUppercase, this.$i18n.locale],
+          { type: "region" }
+        ).of(localeUppercase);
 
-        if (label?.toUpperCase() === 'UNKNOWN REGION') {
+        if (label?.toUpperCase() === "UNKNOWN REGION") {
           label = locale;
         }
 
         return {
           locale,
-          label
+          label,
         };
       } catch (e) {
         return {
           locale,
-          label: locale
+          label: locale,
         };
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
